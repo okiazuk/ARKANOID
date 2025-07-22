@@ -5,6 +5,9 @@ struct BrickType {
     const int gained_points;
 };
 
+
+
+
 class Brick {
 public:
     Brick(); // constructor

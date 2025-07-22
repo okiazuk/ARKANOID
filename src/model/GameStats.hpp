@@ -1,17 +1,24 @@
 #pragma once
+#include "../utils/Configs.hpp"
+
+
+struct BasicInfo {
+    int score = 0;
+    int lives = DEFAULT_NUMBER_OF_LIVES;
+    bool game_over = false;
+};
+
 
 class GameStats {
 public:
-    GameStats();
+    GameStats() = default;
 
-    int getScore() const;
-    int getLives() const;
-
+    const BasicInfo& getBasicInfos() const;
     void addScore(int points);
     void loseLife();
+    void setGameOverFlag(bool flag);
     void reset();
 
 private:
-    int score_;
-    int lives_;
+    BasicInfo basic_infos_;
 };

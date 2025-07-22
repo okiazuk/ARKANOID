@@ -1,28 +1,41 @@
 #pragma once
 #include "../utils/Configs.hpp"
 
-struct BallPositions {
+struct BallPositions
+{
     int x = SCREEN_MIDDLE_POSITION::WIDTH;
     int y = BALL_BOTTOM_POSITION;
 };
 
-struct BallDirection {
-    int x = BALL_DEFAULT_DX;
-    int y = BALL_DEFAULT_DY;
+struct BallDirection
+{
+    int x = 0;
+    int y = -BALL_DEFAULT_SPEED;
 };
 
-class Ball {
+struct BallParamaters
+{
+    int radius = BALL_DEFAULT_RADIUS;
+    int speed = BALL_DEFAULT_SPEED;
+};
+
+class Ball
+{
 public:
-    Ball();
+    Ball() = default;
     void update();
-    void setPosition(int x, int y);
+    bool isLost() const;
+    void reset();
+    void setPosition(int x, int y = BALL_BOTTOM_POSITION);
     void setDirection(int dx, int dy);
-    const BallPositions& getPositions() const;
-    const BallDirection& getDirection() const;
-    int getRadius() const;
+    void setRadius(int radius);
+    void setBallSpeed(int speed);
+    const BallPositions &getPositions() const;
+    const BallDirection &getDirection() const;
+    const BallParamaters &getParameters() const;
 
 private:
     BallPositions positions_;
     BallDirection direction_;
-    int radius_ = BALL_RADIUS;
+    BallParamaters parameters_;
 };

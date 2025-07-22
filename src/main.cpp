@@ -18,11 +18,10 @@ Description: breakout like game in cpp using allegro GUI
 #include "view/GameScreen.hpp"
 
 
-bool game_over = false;
-
 int main(int argc, char* argv[]) {
 
-    std::cout << " [MAIN] GAME STARTING.." << std::endl;
+
+    std::cout << "[MAIN] GAME STARTING.." << std::endl; //logs in terminal
 
     // Initialize Allegro and game objects
     std::vector<std::vector<Brick>> test;
@@ -38,9 +37,10 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    while (!game_over) {
-        controller.processInput(racket);
-        controller.update(board, ball, racket, stats);
+    while (controller.isGameRunning()) {
+        controller.processInput(racket, ball);
+        if (controller.isGameStarting()) 
+        {controller.update(board, ball, racket, stats);}
         view.draw(board, ball, racket, stats);
     }
 
