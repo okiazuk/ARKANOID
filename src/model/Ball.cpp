@@ -7,12 +7,12 @@ void Ball::update() {
   positions_.y += direction_.y;
 }
 
-void Ball::setPosition(int x, int y) {
+void Ball::setPosition(float x, float y) {
   positions_.x = x;
   positions_.y = y;
 }
 
-void Ball::setDirection(int dx, int dy) {
+void Ball::setDirection(float dx, float dy) {
   direction_.x = dx;
   direction_.y = dy;
 }
@@ -22,11 +22,11 @@ const BallDirection& Ball::getDirection() const { return direction_; }
 const BallParamaters& Ball::getParameters() const {return parameters_;}
 
 
-void Ball::setRadius(int radius){
+void Ball::setRadius(float radius){
   parameters_.radius = radius;
 }
 
-void Ball::setBallSpeed(int speed){
+void Ball::setBallSpeed(float speed){
   parameters_.speed = speed;
 }
 

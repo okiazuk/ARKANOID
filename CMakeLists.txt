@@ -27,6 +27,7 @@ add_executable(ARKANOID
     src/model/GameStats.cpp
     src/controller/GameControl.cpp
     src/view/GameScreen.cpp
+    src/utils
 )
 
 target_include_directories(ARKANOID PUBLIC

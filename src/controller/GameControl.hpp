@@ -5,20 +5,27 @@
 #include "../model/Brick.hpp"
 #include "../model/GameStats.hpp"
 #include "../model/Racket.hpp"
+#include <allegro5/allegro.h>
+#include <math.h>
+#include <iostream>
 
 
 
 class GameControl {
 public:
-    void processInput(Racket& racket, Ball& ball);
+    void processGameInput(Racket& racket, Ball& ball);
+		void processMenuInput();
     void update(Board& board, Ball& ball, Racket& racket, GameStats& stats);
+		bool isRunning() const;
 		bool isGameRunning() const;
-		bool isGameStarting() const;
-		void handleBallLost(GameStats& stats, Ball& ball, Racket& racket);
+		bool isBallLaunched() const;
+		void handleBallLost(GameStats& stats, Ball& ball, Racket& racket, Board& board);
 
 private:
-	bool running_flag_ = true; // game is running by default
-	bool game_starting_flag_ = false; // breakout game is not running by default
+	ALLEGRO_KEYBOARD_STATE ks_;
+	bool running_flag_ = true; // overall game is running by default
+	bool game_running_flag_ = true; // level game is running
+	bool ball_launched_ = false; // whether the ball is launched or not 
 	void checkWallCollisions(Ball& ball);
 	void checkBrickCollisions(Ball& ball,  Board& board, GameStats& stats);
 	void checkRacketCollisions(Ball& ball, Racket& racket);

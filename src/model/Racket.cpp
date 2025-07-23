@@ -13,7 +13,7 @@ const RacketPositions& Racket::getPositions() const { return positions_; }
 
 const RacketParameters& Racket::getParameters() const { return parameters_; }
 
-void Racket::setParameters(int width, int height, int speed){
+void Racket::setParameters(int width, int height, float speed){
     parameters_.width = width;
     parameters_.height = height;
     parameters_.speed = speed;
@@ -24,4 +24,8 @@ void Racket::reset(){
 
     positions_ = RacketPositions{};
     parameters_ = RacketParameters{};
+}
+
+void Racket::setPosition(float x){
+    positions_.x = x;
 }

@@ -1,17 +1,21 @@
 #include "view/GameScreen.hpp"
 #include "../utils/Configs.hpp"
 
+/**
+ * @brief everything should const because we simply print from the model
+ * model is using float and view is casting in int
+ */
+
 GameScreen::GameScreen() {}
 
-void GameScreen::draw(const Board &board, const Ball &ball, const Racket &racket, const GameStats &stats)
+void GameScreen::drawGame(const Board &board, const Ball &ball, const Racket &racket, const GameStats &stats)
 {
-    al_clear_to_color(al_map_rgb(0, 0, 0));
+    al_clear_to_color(al_map_rgb(BLACKGROUND_VEC[0], BLACKGROUND_VEC[1], BLACKGROUND_VEC[2]));
 
     // Draw bricks
     const auto &bricks = board.getBricks();
     const int board_height = board.getParameters().height;
     const int board_width = board.getParameters().width;
-
     for (int r = 0; r < board_height; ++r)
     {
         for (int c = 0; c < board_width; ++c)
@@ -22,12 +26,18 @@ void GameScreen::draw(const Board &board, const Ball &ball, const Racket &racket
             const int brick_height = brick.getBrickType().height;
             const std::vector<int> &brick_rgb = brick.getBrickType().rgb_values;
 
-            if (!brick.isDestroyed())
+            if (!brick.isDestroyed() && brick_color != BrickColor::NONE)
             {
-                al_draw_filled_rectangle(
-                    c * brick_width, r * brick_height,
-                    c * brick_width + brick_width, r * brick_height + brick_height,
-                    al_map_rgb(brick_rgb[0], brick_rgb[1], brick_rgb[2]));
+                int x1 = c * brick_width;
+                int y1 = r * brick_height + SEPARATION_LINE_HEIGHT;
+                int x2 = x1 + brick_width;
+                int y2 = y1 + brick_height;
+
+                // Draw filled brick
+                al_draw_filled_rectangle(x1, y1, x2, y2, al_map_rgb(brick_rgb[0], brick_rgb[1], brick_rgb[2]));
+
+                // Draw brick outline
+                al_draw_rectangle(x1, y1, x2, y2, al_map_rgb(BLACKGROUND_VEC[0], BLACKGROUND_VEC[1], BLACKGROUND_VEC[2]), 1.0);
             }
         }
     }
@@ -39,14 +49,15 @@ void GameScreen::draw(const Board &board, const Ball &ball, const Racket &racket
     al_draw_filled_rectangle(
         racket_pos.x, racket_pos.y,
         racket_pos.x + racket_param.width, racket_pos.y + racket_param.height,
-        al_map_rgb(255, 255, 255));
+        al_map_rgb(WHITE_VEC[0], WHITE_VEC[1], WHITE_VEC[2]));
 
-    // Draw ball
+    // Draw ball with proper rounding
     const BallPositions &ball_pos = ball.getPositions();
-    const int ball_radius = ball.getParameters().radius;
     al_draw_filled_circle(
-        ball_pos.x, ball_pos.y, ball_radius,
-        al_map_rgb(255, 255, 255));
+        static_cast<int>(ball_pos.x + 0.5f),     // explicit conversion with rounding
+        static_cast<int>(ball_pos.y + 0.5f),     
+        static_cast<int>(ball.getParameters().radius + 0.5f),  
+        al_map_rgb(WHITE_VEC[0], WHITE_VEC[1], WHITE_VEC[2]));
 
     drawUI(stats);
 
@@ -61,6 +72,22 @@ void GameScreen::destroy()
 void GameScreen::drawUI(const GameStats &stats)
 {
 
+
+    // Draw lines
+    al_draw_line(0, SEPARATION_LINE_HEIGHT, SCREEN_WIDTH,  SEPARATION_LINE_HEIGHT,
+        al_map_rgb(WHITE_VEC[0], WHITE_VEC[0], WHITE_VEC[0]), 1.0);
+
+    al_draw_line(0, 0, SCREEN_WIDTH,  0,
+        al_map_rgb(WHITE_VEC[0], WHITE_VEC[0], WHITE_VEC[0]), 2.0);
+    
+    al_draw_line(0, 0, 0,  SCREEN_HEIGHT,
+        al_map_rgb(WHITE_VEC[0], WHITE_VEC[0], WHITE_VEC[0]), 2.0);
+
+    al_draw_line(SCREEN_WIDTH, 0, SCREEN_WIDTH,  SCREEN_HEIGHT,
+        al_map_rgb(WHITE_VEC[0], WHITE_VEC[0], WHITE_VEC[0]), 2.0);
+    
+
+
     ALLEGRO_TRANSFORM transform;
     al_copy_transform(&transform, al_get_current_transform());
 
@@ -69,10 +96,6 @@ void GameScreen::drawUI(const GameStats &stats)
     al_identity_transform(&scale_transform);
     al_scale_transform(&scale_transform, 2.0, 2.0);
     al_use_transform(&scale_transform);
-
-    // Draw a horizontal line to separate game area from UI
-    al_draw_line(0, SEPARATION_LINE_HEIGHT, SCREEN_WIDTH,  SEPARATION_LINE_HEIGHT,
-                 al_map_rgb(WHITE_VEC[0], WHITE_VEC[0], WHITE_VEC[0]), 2.0);
 
     // Print score left side
     char score_text[50];
@@ -88,6 +111,13 @@ void GameScreen::drawUI(const GameStats &stats)
 
     // Restore original transform
     al_use_transform(&transform);
+}
+
+
+void GameScreen::drawEndGame(){
+
+    std::cout << "[GAME SCREEN] END GAME SCREEN" << std::endl;
+
 }
 
 
@@ -108,6 +138,14 @@ bool GameScreen::init()
         std::cerr << "Failed to install keyboard!" << std::endl;
         return false;
     }
+
+    // Install mouse
+
+    if (!al_install_mouse())
+        {
+            std::cerr << "Failed to install mouse!" << std::endl;
+            return false;
+        }
 
     // Initialize primitives addon
     if (!al_init_primitives_addon())

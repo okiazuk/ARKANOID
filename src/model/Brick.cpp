@@ -1,10 +1,13 @@
 #include "model/Brick.hpp"
+#include <iostream>
 
 // Initialize brick with default type and intact state
 Brick::Brick(int color)
-    : destroyed_(false)
 {
 type_.color = BrickColor(color);
+if (type_.color == BrickColor::NONE){
+    destroyed_ = true;
+}else {destroyed_ = false;}
 type_.gained_points = getPointsFromColor(type_.color);
 type_.rgb_values = getRGBFromColor(type_.color);
 } 
@@ -13,8 +16,11 @@ Brick::~Brick() { }
 
 void Brick::hit()
 {
-    if (type_.color != BrickColor::SILVER || type_.color != BrickColor::GOLD){
+    if (type_.color != BrickColor::SILVER && type_.color != BrickColor::GOLD && type_.color != BrickColor::NONE){
+        std::cout << "[BRICK] you destroyed a brick" << std::endl;
         destroyed_ = true;
+        type_.color = BrickColor::NONE;
+        type_.gained_points = 0;
     } else if (type_.color == BrickColor::SILVER){
         type_.color = BrickColor::SILVER_MODIFIED;
         }
@@ -79,8 +85,8 @@ const std::vector<int>& Brick::getRGBFromColor(BrickColor& color) const {
         case BrickColor::SILVER:
             return SILVER_VEC;
         case BrickColor::NONE:
-             return BLACK_VEC;
+             return BLACKGROUND_VEC;
         default: 
-            return BLACK_VEC;
+            return BLACKGROUND_VEC;
     }
 }

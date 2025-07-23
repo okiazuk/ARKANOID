@@ -14,8 +14,9 @@
 class GameScreen {
 public:
     GameScreen();
-    void draw(const Board& board, const Ball& ball, const Racket& racket, const GameStats& stats);
+    void drawGame(const Board& board, const Ball& ball, const Racket& racket, const GameStats& stats);
     void drawUI(const GameStats& stats);
+    void drawEndGame();
     bool init();
     void destroy();
 

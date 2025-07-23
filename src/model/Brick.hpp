@@ -37,7 +37,7 @@ inline const std::vector<int> BLUE_VEC = {0, 0, 255};
 inline const std::vector<int> MAGENTA_VEC = {255, 0, 255};
 inline const std::vector<int> YELLOW_VEC = {255, 255, 0};
 inline const std::vector<int> SILVER_VEC = {192, 192, 192};
-inline const std::vector<int> BLACK_VEC = {0, 0, 0};
+inline const std::vector<int> BLACKGROUND_VEC = {0, 0, 0};
 
 
 class Brick {

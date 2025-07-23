@@ -2,8 +2,8 @@
 
 #include "Board.hpp"
 
-Board::Board(const std::vector<std::vector<Brick>>& game_level)
-    : game_level_(game_level)
+Board::Board(std::vector<std::vector<Brick>>& game_level)
+    : game_level_(game_level), old_game_level_(game_level)
 {
     if (game_level.empty()) {
         parameters_.width = 0;
@@ -18,13 +18,19 @@ const BoardParameters& Board::getParameters() const {
     return parameters_;
 }
 
-const std::vector<std::vector<Brick>>& Board::getBricks() const
+std::vector<std::vector<Brick>>& Board::getBricks() const
 {
     return game_level_;
+}
+
+void Board::reset(){
+    game_level_ = old_game_level_;
+
 }
 
 
 void Board::changeLevel(const std::vector<std::vector<Brick>>& game_level) 
 {
     game_level_ = game_level;
+    old_game_level_ = game_level;
 }
