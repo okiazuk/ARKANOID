@@ -24,7 +24,7 @@ int main(int argc, char* argv[]) {
     std::cout << "[MAIN] GAME STARTING.." << std::endl; //logs in terminal
 
     // Initialize Allegro and game objects
-    std::vector<std::vector<Brick>> test;
+    std::vector<std::vector<Brick>> test = {{1}};
     Board board = Board(test);
     Ball ball = Ball();
     Racket racket = Racket();

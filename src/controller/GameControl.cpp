@@ -44,7 +44,7 @@ void GameControl::processInput(Racket &racket, Ball &ball)
 
         }
     }
-    if (al_key_down(&ks, ALLEGRO_KEY_P))
+    if (al_key_down(&ks, ALLEGRO_KEY_SPACE))
     {
         game_starting_flag_ = true;
     }
@@ -77,13 +77,14 @@ void GameControl::checkWallCollisions(Ball &ball)
     BallDirection direction = ball.getDirection();
     const int next_x = ball.getPositions().x + direction.x;
     const int next_y = ball.getPositions().y + direction.y;
+    const int ball_radius = ball.getParameters().radius;
 
     // HANDLING SCREEN COLLISIONS
-    if (next_x >= SCREEN_WIDTH || next_x <= 0)
+    if (next_x + ball_radius >= SCREEN_WIDTH || next_x - ball_radius <= 0)
     {
         ball.setDirection(-direction.x, direction.y);
     }
-    else if (next_y <= UI_TEXT_AREA*7)
+    else if (next_y <= UI_TEXT_HEIGHT*7)
     {
         ball.setDirection(direction.x, -direction.y);
     }

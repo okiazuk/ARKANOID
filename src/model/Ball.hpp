@@ -3,7 +3,7 @@
 
 struct BallPositions
 {
-    int x = SCREEN_MIDDLE_POSITION::WIDTH;
+    int x = SCREEN_WIDTH/2;
     int y = BALL_BOTTOM_POSITION;
 };
 

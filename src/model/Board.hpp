@@ -2,17 +2,23 @@
 #include <vector>
 #include "Brick.hpp"
 
+
+struct BoardParameters{
+    int width;
+    int height;
+};
+
+
+
 class Board {
 public:
     Board(const std::vector<std::vector<Brick>>& level);
+    void changeLevel(const std::vector<std::vector<Brick>>& level);
     const std::vector<std::vector<Brick>>& getBricks() const;
-    const int getHeight() const;
-    const int getWidth() const;
-    
+    const BoardParameters& getParameters() const;
 
 
 private:
-    const int width_;
-    const int height_;
-    const std::vector<std::vector<Brick>>& bricks_;
+    BoardParameters parameters_;
+    std::vector<std::vector<Brick>> game_level_;
 };

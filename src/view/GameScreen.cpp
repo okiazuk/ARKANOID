@@ -1,5 +1,5 @@
 #include "view/GameScreen.hpp"
-
+#include "../utils/Configs.hpp"
 
 GameScreen::GameScreen() {}
 
@@ -9,28 +9,32 @@ void GameScreen::draw(const Board &board, const Ball &ball, const Racket &racket
 
     // Draw bricks
     const auto &bricks = board.getBricks();
-    int rows = board.getHeight();
-    int cols = board.getWidth();
-    int brickWidth = 40;
-    int brickHeight = 20;
-    for (int r = 0; r < rows; ++r)
+    const int board_height = board.getParameters().height;
+    const int board_width = board.getParameters().width;
+
+    for (int r = 0; r < board_height; ++r)
     {
-        for (int c = 0; c < cols; ++c)
+        for (int c = 0; c < board_width; ++c)
         {
             const Brick &brick = bricks[r][c];
+            const BrickColor &brick_color = brick.getBrickType().color;
+            const int brick_width = brick.getBrickType().width;
+            const int brick_height = brick.getBrickType().height;
+            const std::vector<int> &brick_rgb = brick.getBrickType().rgb_values;
+
             if (!brick.isDestroyed())
             {
                 al_draw_filled_rectangle(
-                    c * brickWidth, r * brickHeight,
-                    c * brickWidth + brickWidth, r * brickHeight + brickHeight,
-                    al_map_rgb(brick.getColor(), 255, 255));
+                    c * brick_width, r * brick_height,
+                    c * brick_width + brick_width, r * brick_height + brick_height,
+                    al_map_rgb(brick_rgb[0], brick_rgb[1], brick_rgb[2]));
             }
         }
     }
 
     // Draw racket
-    RacketPositions racket_pos = racket.getPositions();
-    RacketParameters racket_param = racket.getParameters();
+    const RacketPositions &racket_pos = racket.getPositions();
+    const RacketParameters &racket_param = racket.getParameters();
 
     al_draw_filled_rectangle(
         racket_pos.x, racket_pos.y,
@@ -38,12 +42,11 @@ void GameScreen::draw(const Board &board, const Ball &ball, const Racket &racket
         al_map_rgb(255, 255, 255));
 
     // Draw ball
-    BallPositions ball_pos = ball.getPositions();
+    const BallPositions &ball_pos = ball.getPositions();
     const int ball_radius = ball.getParameters().radius;
     al_draw_filled_circle(
         ball_pos.x, ball_pos.y, ball_radius,
         al_map_rgb(255, 255, 255));
-
 
     drawUI(stats);
 
@@ -54,6 +57,40 @@ void GameScreen::destroy()
 {
     al_destroy_display(display_);
 }
+
+void GameScreen::drawUI(const GameStats &stats)
+{
+
+    ALLEGRO_TRANSFORM transform;
+    al_copy_transform(&transform, al_get_current_transform());
+
+    // Scale text by 2x
+    ALLEGRO_TRANSFORM scale_transform;
+    al_identity_transform(&scale_transform);
+    al_scale_transform(&scale_transform, 2.0, 2.0);
+    al_use_transform(&scale_transform);
+
+    // Draw a horizontal line to separate game area from UI
+    al_draw_line(0, SEPARATION_LINE_HEIGHT, SCREEN_WIDTH,  SEPARATION_LINE_HEIGHT,
+                 al_map_rgb(WHITE_VEC[0], WHITE_VEC[0], WHITE_VEC[0]), 2.0);
+
+    // Print score left side
+    char score_text[50];
+    sprintf(score_text, "Score: %d", stats.getBasicInfos().score);
+    al_draw_text(font_, al_map_rgb(WHITE_VEC[0], WHITE_VEC[0], WHITE_VEC[0]), UI_TEXT_HEIGHT, UI_TEXT_HEIGHT,
+                 0, score_text);
+
+    // Print score right side
+    char lives_text[50];
+    sprintf(lives_text, "Lives: %d", stats.getBasicInfos().lives);
+    al_draw_text(font_, al_map_rgb(WHITE_VEC[0], WHITE_VEC[0], WHITE_VEC[0]), UI_TEXT_WIDTH_LIVES,
+                 UI_TEXT_HEIGHT, 0, lives_text);
+
+    // Restore original transform
+    al_use_transform(&transform);
+}
+
+
 
 bool GameScreen::init()
 {
@@ -80,14 +117,16 @@ bool GameScreen::init()
     }
 
     // Initialize font addon (still needed for built-in font)
-    if (!al_init_font_addon()) {
+    if (!al_init_font_addon())
+    {
         std::cerr << "Failed to initialize font addon!" << std::endl;
         return false;
     }
 
     // Use built-in font instead of loading TTF
     font_ = al_create_builtin_font();
-    if (!font_) {
+    if (!font_)
+    {
         std::cerr << "Failed to create built-in font!" << std::endl;
         return false;
     }
@@ -102,36 +141,4 @@ bool GameScreen::init()
     }
 
     return true;
-}
-
-void GameScreen::drawUI(const GameStats& stats) {
-
-    ALLEGRO_TRANSFORM transform;
-    al_copy_transform(&transform, al_get_current_transform());
-    
-    // Scale text by 2x
-    ALLEGRO_TRANSFORM scale_transform;
-    al_identity_transform(&scale_transform);
-    al_scale_transform(&scale_transform, 2.0, 2.0);
-    al_use_transform(&scale_transform);
-
-    // Draw a horizontal line to separate game area from UI
-    al_draw_line(0, UI_TEXT_AREA*3, SCREEN_WIDTH/2, UI_TEXT_AREA*3, 
-                 al_map_rgb(255, 255, 255), 2.0);
-
-    // Print score left side
-    char score_text[50];
-    sprintf(score_text, "Score: %d", stats.getBasicInfos().score);
-    al_draw_text(font_, al_map_rgb(255, 255, 255), UI_TEXT_AREA, UI_TEXT_AREA, 
-                0, score_text);
-    
-    // Print score right side
-    char lives_text[50];
-    sprintf(lives_text, "Lives: %d", stats.getBasicInfos().lives);
-    al_draw_text(font_, al_map_rgb(255, 255, 255), (SCREEN_WIDTH - 150)/2,
-                 UI_TEXT_AREA, 0, lives_text);
-
-    // Restore original transform
-    al_use_transform(&transform);
-
 }

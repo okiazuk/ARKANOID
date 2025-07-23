@@ -3,7 +3,7 @@
 
 struct RacketPositions
 {
-    int x = SCREEN_MIDDLE_POSITION::WIDTH - (RACKET_DEFAULT_WIDTH / 2);
+    int x = SCREEN_WIDTH/2 - (RACKET_DEFAULT_WIDTH / 2);
     int y = RACKET_BOTTOM_POSITION;
 };
 
