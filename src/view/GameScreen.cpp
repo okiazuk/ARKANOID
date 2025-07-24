@@ -3,12 +3,27 @@
 
 /**
  * @brief everything should const because we simply print from the model
- * model is using float and view is casting in int
+ * model is using int and view is casting in int
  */
 
-GameScreen::GameScreen() {}
 
-void GameScreen::drawGame(const Board &board, const Ball &ball, const Racket &racket, const GameStats &stats)
+void GameScreen::draw(Board& board, Ball& ball, Racket& racket, GameStats& stats){
+
+
+    if (CURRENT_GAME_STATE == GameStates::IN_GAME){
+
+        drawInGame(board, ball, racket, stats);
+
+    } else if (CURRENT_GAME_STATE == GameStates::END_GAME){
+        drawEndGame(stats);
+    }
+
+
+
+
+}
+
+void GameScreen::drawInGame(const Board &board, const Ball &ball, const Racket &racket, const GameStats &stats)
 {
     al_clear_to_color(al_map_rgb(BLACKGROUND_VEC[0], BLACKGROUND_VEC[1], BLACKGROUND_VEC[2]));
 
@@ -37,7 +52,7 @@ void GameScreen::drawGame(const Board &board, const Ball &ball, const Racket &ra
                 al_draw_filled_rectangle(x1, y1, x2, y2, al_map_rgb(brick_rgb[0], brick_rgb[1], brick_rgb[2]));
 
                 // Draw brick outline
-                al_draw_rectangle(x1, y1, x2, y2, al_map_rgb(BLACKGROUND_VEC[0], BLACKGROUND_VEC[1], BLACKGROUND_VEC[2]), 1.0);
+                al_draw_rectangle(x1, y1, x2, y2, al_map_rgb(BLACKGROUND_VEC[0], BLACKGROUND_VEC[1], BLACKGROUND_VEC[2]), 2.0);
             }
         }
     }
@@ -47,19 +62,19 @@ void GameScreen::drawGame(const Board &board, const Ball &ball, const Racket &ra
     const RacketParameters &racket_param = racket.getParameters();
 
     al_draw_filled_rectangle(
-        racket_pos.x, racket_pos.y,
-        racket_pos.x + racket_param.width, racket_pos.y + racket_param.height,
+        (racket_pos.x + +0.5f),(racket_pos.y + +0.5f),
+        (racket_pos.x + +0.5f) + racket_param.width, (racket_pos.y + +0.5f) + racket_param.height,
         al_map_rgb(WHITE_VEC[0], WHITE_VEC[1], WHITE_VEC[2]));
 
     // Draw ball with proper rounding
     const BallPositions &ball_pos = ball.getPositions();
     al_draw_filled_circle(
-        static_cast<int>(ball_pos.x + 0.5f),     // explicit conversion with rounding
-        static_cast<int>(ball_pos.y + 0.5f),     
-        static_cast<int>(ball.getParameters().radius + 0.5f),  
+        static_cast<int>(ball_pos.x + 0.5f), // explicit conversion with rounding
+        static_cast<int>(ball_pos.y + 0.5f),
+        static_cast<int>(ball.getParameters().radius + 0.5f),
         al_map_rgb(WHITE_VEC[0], WHITE_VEC[1], WHITE_VEC[2]));
 
-    drawUI(stats);
+    drawUI(stats, board);
 
     al_flip_display();
 }
@@ -69,24 +84,21 @@ void GameScreen::destroy()
     al_destroy_display(display_);
 }
 
-void GameScreen::drawUI(const GameStats &stats)
+void GameScreen::drawUI(const GameStats &stats, const Board& board)
 {
 
-
     // Draw lines
-    al_draw_line(0, SEPARATION_LINE_HEIGHT, SCREEN_WIDTH,  SEPARATION_LINE_HEIGHT,
-        al_map_rgb(WHITE_VEC[0], WHITE_VEC[0], WHITE_VEC[0]), 1.0);
+    al_draw_line(0, SEPARATION_LINE_HEIGHT, SCREEN_WIDTH, SEPARATION_LINE_HEIGHT,
+                 al_map_rgb(WHITE_VEC[0], WHITE_VEC[0], WHITE_VEC[0]), 1.0);
 
-    al_draw_line(0, 0, SCREEN_WIDTH,  0,
-        al_map_rgb(WHITE_VEC[0], WHITE_VEC[0], WHITE_VEC[0]), 2.0);
-    
-    al_draw_line(0, 0, 0,  SCREEN_HEIGHT,
-        al_map_rgb(WHITE_VEC[0], WHITE_VEC[0], WHITE_VEC[0]), 2.0);
+    al_draw_line(0, 0, SCREEN_WIDTH, 0,
+                 al_map_rgb(WHITE_VEC[0], WHITE_VEC[0], WHITE_VEC[0]), 2.0);
 
-    al_draw_line(SCREEN_WIDTH, 0, SCREEN_WIDTH,  SCREEN_HEIGHT,
-        al_map_rgb(WHITE_VEC[0], WHITE_VEC[0], WHITE_VEC[0]), 2.0);
-    
+    al_draw_line(0, 0, 0, SCREEN_HEIGHT,
+                 al_map_rgb(WHITE_VEC[0], WHITE_VEC[0], WHITE_VEC[0]), 2.0);
 
+    al_draw_line(SCREEN_WIDTH, 0, SCREEN_WIDTH, SCREEN_HEIGHT,
+                 al_map_rgb(WHITE_VEC[0], WHITE_VEC[0], WHITE_VEC[0]), 2.0);
 
     ALLEGRO_TRANSFORM transform;
     al_copy_transform(&transform, al_get_current_transform());
@@ -97,28 +109,96 @@ void GameScreen::drawUI(const GameStats &stats)
     al_scale_transform(&scale_transform, 2.0, 2.0);
     al_use_transform(&scale_transform);
 
+
     // Print score left side
     char score_text[50];
     sprintf(score_text, "Score: %d", stats.getBasicInfos().score);
-    al_draw_text(font_, al_map_rgb(WHITE_VEC[0], WHITE_VEC[0], WHITE_VEC[0]), UI_TEXT_HEIGHT, UI_TEXT_HEIGHT,
+    al_draw_text(font_, al_map_rgb(WHITE_VEC[0], WHITE_VEC[0], WHITE_VEC[0]), UI_TEXT_INFO_WIDTH_BETWEEN_WALLS, UI_TEXT_INFO_HEIGHT,
                  0, score_text);
+
+    
+    // Print Best Score
+    char best_score_text[50];
+    sprintf(best_score_text, "Best Score: %d", loadScore(SCORE_PATH));
+    al_draw_text(font_, al_map_rgb(WHITE_VEC[0], WHITE_VEC[0], WHITE_VEC[0]), UI_TEXT_INFO_WIDTH_BETWEEN_WALLS*7, UI_TEXT_INFO_HEIGHT,
+                 0, best_score_text);
+
+    
+
+    // Print Level 
+    char level[50];
+    sprintf(level, "Level: %d", board.getLevelNumber());
+    al_draw_text(font_, al_map_rgb(WHITE_VEC[0], WHITE_VEC[0], WHITE_VEC[0]), UI_TEXT_INFO_WIDTH_BETWEEN_WALLS*16, UI_TEXT_INFO_HEIGHT,
+                 0, level);
+
+
+
+    const int base_width = al_get_text_width(font_, "Lives:  ");
+    const int scaled_width = base_width * 2.0;
 
     // Print score right side
     char lives_text[50];
     sprintf(lives_text, "Lives: %d", stats.getBasicInfos().lives);
-    al_draw_text(font_, al_map_rgb(WHITE_VEC[0], WHITE_VEC[0], WHITE_VEC[0]), UI_TEXT_WIDTH_LIVES,
-                 UI_TEXT_HEIGHT, 0, lives_text);
+    al_draw_text(font_, al_map_rgb(WHITE_VEC[0], WHITE_VEC[0], WHITE_VEC[0]), (SCREEN_WIDTH - scaled_width)/2 - UI_TEXT_INFO_WIDTH_BETWEEN_WALLS,
+                 UI_TEXT_INFO_HEIGHT, 0, lives_text);
 
     // Restore original transform
     al_use_transform(&transform);
 }
 
+void GameScreen::drawEndGame(const GameStats& stats)
+{
 
-void GameScreen::drawEndGame(){
+    bool game_over = stats.getBasicInfos().game_over;
 
-    std::cout << "[GAME SCREEN] END GAME SCREEN" << std::endl;
+    al_clear_to_color(al_map_rgb(BLACKGROUND_VEC[0], BLACKGROUND_VEC[1], BLACKGROUND_VEC[2]));
 
+    // Save current transform
+    ALLEGRO_TRANSFORM transform;
+    al_copy_transform(&transform, al_get_current_transform());
+
+    // Create a larger scale for game over text
+    ALLEGRO_TRANSFORM scale_transform;
+    al_identity_transform(&scale_transform);
+    al_scale_transform(&scale_transform, 3.0, 3.0); 
+
+    al_use_transform(&scale_transform);
+
+
+    if (game_over){
+        int base_width = al_get_text_width(font_, "GAME OVER");
+        int scaled_width = base_width * 3;
+
+        al_draw_text(font_, al_map_rgb(WHITE_VEC[0], WHITE_VEC[1], WHITE_VEC[2]), 
+                (SCREEN_WIDTH - scaled_width) /6, (SCREEN_HEIGHT/6), 0, "GAME OVER");
+
+    }else {
+        int base_width = al_get_text_width(font_, "VICTORY");
+        int scaled_width = base_width * 3;
+
+        al_draw_text(font_, al_map_rgb(WHITE_VEC[0], WHITE_VEC[1], WHITE_VEC[2]), 
+        (SCREEN_WIDTH - scaled_width) /6, (SCREEN_HEIGHT/6), 0, "VICTORY");
+    }
+
+    // Scale down a bit for other text
+    al_identity_transform(&scale_transform);
+    al_scale_transform(&scale_transform, 2.0, 2.0);
+    al_use_transform(&scale_transform);
+
+
+    int base_width = al_get_text_width(font_, "Press any key to restart");
+    int scaled_width = base_width * 2;
+    
+    // Add restart instruction
+    al_draw_text(font_, al_map_rgb(WHITE_VEC[0], WHITE_VEC[1], WHITE_VEC[2]), 
+                 (SCREEN_WIDTH - scaled_width) / 4, (SCREEN_HEIGHT/4) + UI_TEXT_INFO_HEIGHT*2, 0, "Press any key to restart");
+
+    // Restore original transform
+    al_use_transform(&transform);
+
+    al_flip_display();
 }
+
 
 
 
@@ -142,10 +222,10 @@ bool GameScreen::init()
     // Install mouse
 
     if (!al_install_mouse())
-        {
-            std::cerr << "Failed to install mouse!" << std::endl;
-            return false;
-        }
+    {
+        std::cerr << "Failed to install mouse!" << std::endl;
+        return false;
+    }
 
     // Initialize primitives addon
     if (!al_init_primitives_addon())

@@ -1,5 +1,5 @@
 #pragma once
-
+#include <string>
 /**
  * @brief using constexpr for better performance
  */
@@ -16,8 +16,8 @@ constexpr int NUMBER_OF_ROW = 7;
 
 //--Brick--
 
-constexpr int BRICK_DEFAULT_WIDTH = 65;
-constexpr int BRICK_DEFAULT_HEIGHT = 20;
+constexpr int BRICK_DEFAULT_WIDTH = 80;
+constexpr int BRICK_DEFAULT_HEIGHT = 30;
 
 
 // 16:9 ratio
@@ -25,10 +25,10 @@ constexpr int SCREEN_WIDTH = NUMBER_OF_BRICKS_PER_ROW * BRICK_DEFAULT_WIDTH;
 constexpr int SCREEN_HEIGHT = 900;
 
 
-//-- UI score, lives, lines, etc
-constexpr int UI_TEXT_HEIGHT = 10;
-constexpr int UI_TEXT_WIDTH_LIVES = (SCREEN_WIDTH - 150) / 2;
-constexpr int SEPARATION_LINE_HEIGHT = UI_TEXT_HEIGHT*6;
+//-- UI score, lives, lines, game over
+constexpr int UI_TEXT_INFO_HEIGHT = 10;
+constexpr int UI_TEXT_INFO_WIDTH_BETWEEN_WALLS = 20;
+constexpr int SEPARATION_LINE_HEIGHT = UI_TEXT_INFO_HEIGHT*6;
 
 
 //--Racket--
@@ -41,7 +41,7 @@ constexpr int RACKET_BOTTOM_POSITION = 800;
 //--Ball--
 
 constexpr int BALL_BOTTOM_POSITION = 790;
-constexpr int BALL_DEFAULT_RADIUS = 8;
+constexpr int BALL_DEFAULT_RADIUS = 7;
 constexpr int BALL_DEFAULT_SPEED = 6;
 
 
@@ -60,6 +60,12 @@ constexpr int SILVER_POINTS = 200;
 
 //-----GAME STATS--------
 
-constexpr int DEFAULT_NUMBER_OF_LIVES = 3; // 3 balls; 0,1,2
+constexpr int DEFAULT_NUMBER_OF_LIVES = 1; // 3 balls; 0,1,2
 
 
+
+//---FILE PATH-----
+
+const std::string SCORE_PATH = "../src/model/best_score.txt";
+
+const std::string LEVEL1_PATH = "../src/model/levels/level_1.txt";

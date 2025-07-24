@@ -5,7 +5,8 @@
 #include <fstream>
 #include <iostream>
 
-std::vector<std::vector<Brick>> loadLevel(const std::string& filename) {
+
+inline std::vector<std::vector<Brick>> loadLevel(const std::string& filename) {
     std::vector<std::vector<Brick>> level;
     std::ifstream file(filename);
     
@@ -19,9 +20,16 @@ std::vector<std::vector<Brick>> loadLevel(const std::string& filename) {
         std::vector<Brick> row;
         
         for (char c : line) {
-            int brickColor = c - '0';  // '1' becomes 1, '2' becomes 2, etc.
+            int brick_color;
+            if (c == 'x'){
+                brick_color = 11;
+            }else if (c == 'g'){
+                brick_color = 10;
+            } else{
+                brick_color = c - '0';  // '1' becomes 1, '2' becomes 2, etc.
+            }
             
-            row.emplace_back(brickColor);
+            row.emplace_back(brick_color);
         }
         
         if (!row.empty()) {
@@ -32,3 +40,6 @@ std::vector<std::vector<Brick>> loadLevel(const std::string& filename) {
     file.close();
     return level;
 }
+
+
+

@@ -23,6 +23,8 @@ void Brick::hit()
         type_.gained_points = 0;
     } else if (type_.color == BrickColor::SILVER){
         type_.color = BrickColor::SILVER_MODIFIED;
+        type_.rgb_values = getRGBFromColor(type_.color);
+        type_.gained_points = getPointsFromColor(type_.color);
         }
 }
 
@@ -55,7 +57,7 @@ const int Brick::getPointsFromColor(BrickColor& color) const {
             return MAGENTA_POINTS;
         case BrickColor::YELLOW:
             return YELLOW_POINTS;
-        case BrickColor::SILVER:
+        case BrickColor::SILVER_MODIFIED:
             return SILVER_POINTS;
         default:
             return 0;  
@@ -84,8 +86,12 @@ const std::vector<int>& Brick::getRGBFromColor(BrickColor& color) const {
             return YELLOW_VEC;
         case BrickColor::SILVER:
             return SILVER_VEC;
+        case BrickColor::SILVER_MODIFIED:
+            return SILVER_MODIFIED_VEC;
+        case BrickColor::GOLD:
+            return GOLD_VEC;
         case BrickColor::NONE:
-             return BLACKGROUND_VEC;
+            return BLACKGROUND_VEC;
         default: 
             return BLACKGROUND_VEC;
     }

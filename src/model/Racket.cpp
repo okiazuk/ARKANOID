@@ -1,31 +1,33 @@
 #include "model/Racket.hpp"
 
-
-void Racket::moveLeft() { 
+void Racket::moveLeft()
+{
     positions_.x -= parameters_.speed;
 }
 
-void Racket::moveRight() {
+void Racket::moveRight()
+{
     positions_.x += parameters_.speed;
 }
 
-const RacketPositions& Racket::getPositions() const { return positions_; }
+const RacketPositions &Racket::getPositions() const { return positions_; }
 
-const RacketParameters& Racket::getParameters() const { return parameters_; }
+const RacketParameters &Racket::getParameters() const { return parameters_; }
 
-void Racket::setParameters(int width, int height, float speed){
+void Racket::setParameters(int width, int height, int speed)
+{
     parameters_.width = width;
     parameters_.height = height;
     parameters_.speed = speed;
 }
 
+void Racket::reset()
+{
 
-void Racket::reset(){
-
-    positions_ = RacketPositions{};
     parameters_ = RacketParameters{};
 }
 
-void Racket::setPosition(float x){
+void Racket::setPosition(float x)
+{
     positions_.x = x;
 }

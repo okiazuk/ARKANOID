@@ -17,6 +17,11 @@ Description: breakout like game in cpp using allegro GUI
 #include "model/Racket.hpp"
 #include "view/GameScreen.hpp"
 #include "utils/LevelLoader.hpp"
+#include <map>
+
+
+
+
 
 
 int main(int argc, char* argv[]) {
@@ -25,17 +30,22 @@ int main(int argc, char* argv[]) {
     std::cout << "[MAIN] GAME STARTING.." << std::endl; //logs in terminal
 
     // Initialize LEVEL 1
-     std::vector<std::vector<Brick>> level = loadLevel("../src/model/levels/level_1.txt");
+    std::map<int, std::vector<std::vector<Brick>>> level_map ;
 
-    // Fallback to default if loading fails
-    if (level.empty()) {
-        std::cout << "Failed to load level, creating default..." << std::endl;
-        level = std::vector<std::vector<Brick>>(8, std::vector<Brick>(14, Brick(1)));
+    level_map[1] = loadLevel(LEVEL1_PATH);
+
+    int current_level_number = 1;
+    std::vector<std::vector<Brick>> current_level = level_map[current_level_number];
+
+     // Fallback to default if loading fails
+    if (current_level.empty()) {
+        std::cout << "Failed to load level " << current_level_number << ", creating default..." << std::endl;
+        current_level = std::vector<std::vector<Brick>>(8, std::vector<Brick>(14, Brick(0)));
     }
 
     // Initialize game objects
 
-    Board board = Board(level);
+    Board board = Board(current_level, current_level_number);
     Ball ball = Ball();
     Racket racket = Racket();
     GameStats stats = GameStats();
@@ -51,15 +61,16 @@ int main(int argc, char* argv[]) {
     // MAIN LOOP
     while (controller.isRunning()) {
 
-        if(controller.isGameRunning()){
-            controller.processGameInput(racket, ball);
-            if (controller.isBallLaunched()) 
-            {controller.update(board, ball, racket, stats);}
-            view.drawGame(board, ball, racket, stats);
-        }else {
-            view.drawEndGame();
-            controller.processMenuInput();
+        controller.processInputs(racket, ball);
+
+
+        if (controller.isBallLaunched()) {
+
+            controller.update(board, ball, racket, stats);
         }
+
+
+        view.draw(board, ball, racket, stats);
     }
 
     view.destroy();
