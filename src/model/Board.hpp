@@ -1,7 +1,8 @@
 #pragma once
-#include <vector>
 #include "Brick.hpp"
 #include "../utils/LevelLoader.hpp"
+#include <vector>
+
 
 
 struct BoardParameters{
@@ -13,7 +14,7 @@ struct BoardParameters{
 
 class Board {
 public:
-    Board(std::vector<std::vector<Brick>>& level, int level_number);
+    Board(std::vector<std::vector<Brick>>& level, int level_number = 0);
     void changeLevel(const std::vector<std::vector<Brick>>& level);
     void reset();
     std::vector<std::vector<Brick>>& getBricks() const;

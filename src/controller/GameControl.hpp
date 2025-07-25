@@ -16,7 +16,7 @@
 
 class GameControl {
 public:
-		void processInputs(Racket &racket, Ball &ball);
+		void processInputs(Racket &racket, Ball &ball, Board& board, GameStats& stats);
     void update(Board& board, Ball& ball, Racket& racket, GameStats& stats);
 		bool isRunning() const;
 		GameStates getGameState() const;
@@ -35,6 +35,7 @@ private:
 	void checkRacketCollisions(Ball& ball, Racket& racket);
 	bool hasWon(Board& board);
 	void resetGame(GameStats &stats, Ball &ball, Racket &racket, Board &board);
+	void processEndGameInput();
 	void saveBestScore(GameStats& stats);
 
 };

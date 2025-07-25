@@ -10,7 +10,7 @@ inline const int loadScore(const std::string& filename) {
     std::ifstream file(filename);
     
     if (!file.is_open()) {
-        std::cerr << "Failed to open level file: " << filename << std::endl;
+        std::cout << "[SCORE LOADER] Error failed to open level file: " << filename << std::endl;
         return 0;  
     }
     
@@ -19,7 +19,7 @@ inline const int loadScore(const std::string& filename) {
 			try {
 				return std::stoi(line);
 			} catch (const std::exception& e) {
-				std::cerr << "Failed to convert score: " << e.what() << std::endl;
+				std::cout << "[SCORE LOADER] Errorr failed to convert score: " << e.what() << std::endl;
 				return 0;
 			}
 			
@@ -33,7 +33,7 @@ inline void saveScore(int score, const std::string& filename) {
 	std::ofstream file(filename);
 
 	if (!file.is_open()) {
-		std::cerr << "Failed to open score file for writing: " << filename << std::endl;
+		std::cout << "[SCORE LOADER] Error failed to open score file for writing: " << filename << std::endl;
 		return;
 	}
 

@@ -11,7 +11,7 @@ inline std::vector<std::vector<Brick>> loadLevel(const std::string& filename) {
     std::ifstream file(filename);
     
     if (!file.is_open()) {
-        std::cerr << "Failed to open level file: " << filename << std::endl;
+        std::cout << "[LEVEL LOARDER] Error Failed to open level file: " << filename << std::endl;
         return level;  
     }
     

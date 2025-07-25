@@ -1,5 +1,7 @@
 # ARKANOID PROJECT
 
+## ADVANCEMENTS
+
 ### Objectives
 
 - write a functional arkanoid game in C++ based on the pdf instruction given for INFO-f202 course

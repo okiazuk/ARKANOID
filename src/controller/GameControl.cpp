@@ -1,19 +1,31 @@
 #include "controller/GameControl.hpp"
 #include <string>
+#include <algorithm>
+#include <cmath>
+#include <iostream>
+#include <fstream>
 
+void GameControl::processInputs(Racket &racket, Ball &ball, Board& board, GameStats& stats)
+{
 
-
-
-void GameControl::processInputs(Racket &racket, Ball &ball){
-
-    if (CURRENT_GAME_STATE == GameStates::MAIN_MENU || CURRENT_GAME_STATE == GameStates::END_GAME){
+    if (CURRENT_GAME_STATE == GameStates::MAIN_MENU)
+    {
         processMenuInput();
-    } else if (CURRENT_GAME_STATE == GameStates::IN_GAME){
+    }
+    else if (CURRENT_GAME_STATE == GameStates::IN_GAME)
+    {
+
+        if (isBallLaunched()) {
+            update(board, ball, racket, stats);
+        }
+
         processGameInput(racket, ball);
+
+    } else if (CURRENT_GAME_STATE == GameStates::END_GAME){
+
+        processEndGameInput();
     }
 }
-
-
 
 void GameControl::processGameInput(Racket &racket, Ball &ball)
 {
@@ -22,16 +34,18 @@ void GameControl::processGameInput(Racket &racket, Ball &ball)
     const int racket_speed = racket.getParameters().speed;
     const int racket_width = racket.getParameters().width;
 
-    //LATER FOR INPUT OPTION BETWEEN MOUSE AND KEYBOARD
+    // LATER FOR INPUT OPTION BETWEEN MOUSE AND KEYBOARD
     ALLEGRO_MOUSE_STATE ms;
     al_get_mouse_state(&ms);
     // Mouse control
     int new_racket_x = ms.x - racket_width / 2;
 
-    if (new_racket_x < 0) {
+    if (new_racket_x < 0)
+    {
         new_racket_x = 0;
     }
-    if (new_racket_x + racket_width > SCREEN_WIDTH) {
+    if (new_racket_x + racket_width > SCREEN_WIDTH)
+    {
         new_racket_x = SCREEN_WIDTH - racket_width;
     }
     racket.setPosition(new_racket_x);
@@ -51,7 +65,6 @@ void GameControl::processGameInput(Racket &racket, Ball &ball)
             racket.moveRight();
         }
     }
-
 
     // Update ball position before game starts
     if (!ball_launched_)
@@ -79,8 +92,37 @@ void GameControl::processMenuInput()
             break;
         }
     }
+    /*
+
+    std::vector<std::vector<Brick>> level = loadLevel(LEVEL1_PATH);
+
+    int current_level_number = 1;
+    std::vector<std::vector<Brick>> current_level = level_map[current_level_number];
+
+     // Fallback to default if loading fails
+    if (current_level.empty()) {
+        std::cout << " [MAIN] Failed to load level " << current_level_number << ", creating default..." << std::endl;
+        current_level = std::vector<std::vector<Brick>>(8, std::vector<Brick>(14, Brick(0)));
+    }
+    */
+
+
 }
 
+void GameControl::processEndGameInput()
+{
+
+    al_get_keyboard_state(&ks_);
+    for (int i = 1; i < ALLEGRO_KEY_MAX; i++)
+    {
+        if (al_key_down(&ks_, i))
+        {
+            CURRENT_GAME_STATE = GameStates::IN_GAME;
+
+            break;
+        }
+    }
+}
 
 
 void GameControl::update(Board &board,
@@ -88,24 +130,24 @@ void GameControl::update(Board &board,
                          Racket &racket,
                          GameStats &stats)
 {
-        // Update ball position
-        ball.update();
-        checkBrickCollisions(ball, board, stats);
-        checkWallCollisions(ball);
-        checkRacketCollisions(ball, racket);
+    // Update ball position
+    ball.update();
+    checkBrickCollisions(ball, board, stats);
+    checkWallCollisions(ball);
+    checkRacketCollisions(ball, racket);
 
-        if (ball_launched_ && ball.isLost())
-        {
-            handleBallLost(stats, ball, racket, board);
-        }
-
-        if (hasWon(board)){
-            stats.setGameOverFlag(false);
-            resetGame(stats, ball, racket, board);
-            CURRENT_GAME_STATE = GameStates::END_GAME;
-            saveBestScore(stats);
+    if (ball_launched_ && ball.isLost())
+    {
+        handleBallLost(stats, ball, racket, board);
     }
 
+    if (hasWon(board))
+    {
+        stats.setGameOverFlag(false);
+        resetGame(stats, ball, racket, board);
+        CURRENT_GAME_STATE = GameStates::END_GAME;
+        saveBestScore(stats);
+    }
 }
 
 void GameControl::checkWallCollisions(Ball &ball)
@@ -117,7 +159,7 @@ void GameControl::checkWallCollisions(Ball &ball)
     const float ball_speed = ball.getParameters().speed;
 
     // HANDLING SCREEN COLLISIONS
-    if (ball_x + ball_radius  + ball_speed >= SCREEN_WIDTH || ball_x - ball_radius - ball_speed <= 0)
+    if (ball_x + ball_radius + ball_speed >= SCREEN_WIDTH || ball_x - ball_radius - ball_speed <= 0)
     {
         ball.setDirection(-direction.x, direction.y);
     }
@@ -146,9 +188,9 @@ void GameControl::checkRacketCollisions(Ball &ball, Racket &racket)
 
     if ((ball_y + ball_radius >= racket_y) &&
         (ball_y + ball_radius <= racket_y + racket_height) &&
-        ((ball_x + ball_radius >= racket_x) &&
+        ((ball_x + ball_radius >= racket_x) && // check hit from left side
              (ball_x <= racket_x + racket_width) ||
-         ((ball_x >= racket_x) &&
+         ((ball_x >= racket_x) && // check hit from right side
           (ball_x - ball_radius <= racket_x + racket_width))))
 
     {
@@ -250,26 +292,30 @@ void GameControl::checkBrickCollisions(Ball &ball, Board &board, GameStats &stat
 }
 
 
-bool GameControl::hasWon(Board& board){
 
+
+bool GameControl::hasWon(Board &board)
+{
 
     const int board_height = board.getParameters().height;
     const int board_width = board.getParameters().width;
     auto &bricks = board.getBricks();
 
-    for (int r = 0; r < board_height; r++){
+    for (int r = 0; r < board_height; r++)
+    {
 
-        for (int c = 0; c < board_width; c++){
+        for (int c = 0; c < board_width; c++)
+        {
 
             Brick &brick = bricks[r][c];
-            if(!brick.isDestroyed())
-                {return false;}
+            if (!brick.isDestroyed())
+            {
+                return false;
+            }
         }
     }
     return true;
-
 }
-
 
 bool GameControl::isRunning() const
 {
@@ -281,7 +327,6 @@ bool GameControl::isBallLaunched() const
     return ball_launched_;
 }
 
-
 void GameControl::handleBallLost(GameStats &stats, Ball &ball, Racket &racket, Board &board)
 {
 
@@ -291,7 +336,7 @@ void GameControl::handleBallLost(GameStats &stats, Ball &ball, Racket &racket, B
     {
         const int ball_speed = ball.getParameters().speed;
         stats.loseLife();
-        ball.setDirection(0,-ball_speed);
+        ball.setDirection(0, -ball_speed);
     }
     else
     {
@@ -299,12 +344,12 @@ void GameControl::handleBallLost(GameStats &stats, Ball &ball, Racket &racket, B
         resetGame(stats, ball, racket, board);
         stats.setGameOverFlag(true);
         CURRENT_GAME_STATE = GameStates::END_GAME;
-
     }
     ball_launched_ = false;
 }
 
-void GameControl::resetGame(GameStats &stats, Ball &ball, Racket &racket, Board &board){
+void GameControl::resetGame(GameStats &stats, Ball &ball, Racket &racket, Board &board)
+{
     stats.reset();
     racket.reset();
     ball.reset();
@@ -312,13 +357,15 @@ void GameControl::resetGame(GameStats &stats, Ball &ball, Racket &racket, Board 
     ball_launched_ = false;
 }
 
-void GameControl::saveBestScore(GameStats& stats){
+void GameControl::saveBestScore(GameStats &stats)
+{
 
     const int best_score = loadScore(SCORE_PATH);
     const int current_score = stats.getBasicInfos().score;
     std::cout << best_score << "  " << current_score << std::endl;
-    if (best_score < current_score){
-        
+    if (best_score < current_score)
+    {
+
         saveScore(current_score, SCORE_PATH);
     }
 }

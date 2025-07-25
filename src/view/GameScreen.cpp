@@ -16,8 +16,9 @@ void GameScreen::draw(Board& board, Ball& ball, Racket& racket, GameStats& stats
 
     } else if (CURRENT_GAME_STATE == GameStates::END_GAME){
         drawEndGame(stats);
+    } else if (CURRENT_GAME_STATE == GameStates::MAIN_MENU){
+        drawMainMenu();
     }
-
 
 
 
@@ -128,7 +129,7 @@ void GameScreen::drawUI(const GameStats &stats, const Board& board)
     // Print Level 
     char level[50];
     sprintf(level, "Level: %d", board.getLevelNumber());
-    al_draw_text(font_, al_map_rgb(WHITE_VEC[0], WHITE_VEC[0], WHITE_VEC[0]), UI_TEXT_INFO_WIDTH_BETWEEN_WALLS*16, UI_TEXT_INFO_HEIGHT,
+    al_draw_text(font_, al_map_rgb(WHITE_VEC[0], WHITE_VEC[0], WHITE_VEC[0]), UI_TEXT_INFO_WIDTH_BETWEEN_WALLS*17, UI_TEXT_INFO_HEIGHT,
                  0, level);
 
 
@@ -145,6 +146,15 @@ void GameScreen::drawUI(const GameStats &stats, const Board& board)
     // Restore original transform
     al_use_transform(&transform);
 }
+
+
+
+void GameScreen::drawMainMenu(){
+
+
+}
+
+
 
 void GameScreen::drawEndGame(const GameStats& stats)
 {
@@ -208,14 +218,14 @@ bool GameScreen::init()
     // Initialize Allegro
     if (!al_init())
     {
-        std::cerr << "Failed to initialize Allegro!" << std::endl;
+        std::cout << "[GAMESCREEN] Error failed to initialize Allegro!" << std::endl;
         return false;
     }
 
     // Install keyboard
     if (!al_install_keyboard())
     {
-        std::cerr << "Failed to install keyboard!" << std::endl;
+        std::cout << "[GAMESCREEN] Error failed to install keyboard!" << std::endl;
         return false;
     }
 
@@ -223,21 +233,21 @@ bool GameScreen::init()
 
     if (!al_install_mouse())
     {
-        std::cerr << "Failed to install mouse!" << std::endl;
+        std::cout << "[GAMESCREEN] Error failed to install mouse!" << std::endl;
         return false;
     }
 
     // Initialize primitives addon
     if (!al_init_primitives_addon())
     {
-        std::cerr << "Failed to initialize primitives addon!" << std::endl;
+        std::cout << "[GAMESCREEN] Error failed to initialize primitives addon!" << std::endl;
         return false;
     }
 
     // Initialize font addon (still needed for built-in font)
     if (!al_init_font_addon())
     {
-        std::cerr << "Failed to initialize font addon!" << std::endl;
+        std::cout << "[GAMESCREEN] Error failed to initialize font addon!" << std::endl;
         return false;
     }
 
@@ -245,7 +255,7 @@ bool GameScreen::init()
     font_ = al_create_builtin_font();
     if (!font_)
     {
-        std::cerr << "Failed to create built-in font!" << std::endl;
+        std::cout << "[GAMESCREEN] Error failed to create built-in font!" << std::endl;
         return false;
     }
 
@@ -253,7 +263,7 @@ bool GameScreen::init()
     display_ = al_create_display(SCREEN_WIDTH, SCREEN_HEIGHT);
     if (!display_)
     {
-        std::cerr << "Failed to create display!" << std::endl;
+        std::cout << "[GAMESCREEN] Error failed to create display!" << std::endl;
         al_destroy_font(font_);
         return false;
     }

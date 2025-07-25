@@ -1,4 +1,4 @@
-
+, 
 
 #include "Board.hpp"
 
@@ -34,6 +34,7 @@ void Board::changeLevel(const std::vector<std::vector<Brick>>& game_level)
 {
     game_level_ = game_level;
     old_game_level_ = game_level;
+    
 }
 
 const int Board::getLevelNumber() const{
