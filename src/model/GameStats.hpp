@@ -1,5 +1,6 @@
 #pragma once
 #include "../utils/Configs.hpp"
+#include <string>
 
 
 struct BasicInfo {
@@ -16,9 +17,12 @@ public:
     const BasicInfo& getBasicInfos() const;
     void addScore(int points);
     void loseLife();
+    void gainLife();
     void setGameOverFlag(bool flag);
     void reset();
 
 private:
     BasicInfo basic_infos_;
+    std::string best_score_path_;
+    std::string level_path;
 };

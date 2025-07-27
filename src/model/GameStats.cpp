@@ -10,6 +10,11 @@ void GameStats::addScore(int points){
 	basic_infos_.score += points;
 }
 
+void GameStats::gainLife() {
+	basic_infos_.lives += 1;
+}
+
+
 
 void GameStats::reset(){
 	basic_infos_.score = 0;

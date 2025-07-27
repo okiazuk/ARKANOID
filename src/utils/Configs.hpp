@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <map>
 /**
  * @brief using constexpr for better performance
  */
@@ -43,6 +44,13 @@ constexpr int RACKET_BOTTOM_POSITION = 800;
 constexpr int BALL_BOTTOM_POSITION = 790;
 constexpr int BALL_DEFAULT_RADIUS = 7;
 constexpr int BALL_DEFAULT_SPEED = 6;
+constexpr int BALL_DEFAULT_DX = 0;
+
+//--Power Ups--
+
+constexpr int PU_DEFAULT_DY = 1;
+constexpr int PU_DEFAULT_DX = 0;
+constexpr int PU_DEFAULT_SPEED = 4;
 
 
 //-Points gained per brick-
@@ -61,11 +69,35 @@ constexpr int SILVER_POINTS = 200;
 //-----GAME STATS--------
 
 constexpr int DEFAULT_NUMBER_OF_LIVES = 1; // 3 balls; 0,1,2
+constexpr int TOTAL_LEVELS = 4;
 
 
 
-//---FILE PATH-----
+//---MAPS-----
 
-const std::string SCORE_PATH = "../src/model/best_score.txt";
 
-const std::string LEVEL1_PATH = "../src/model/levels/level_1.txt";
+inline std::map<int, std::string> BEST_SCORE_PATH_MAP =
+{
+	{0, "../src/model/levels/best_score_1"},
+	{1, "../src/model/levels/best_score_2"},
+	{2, "../src/model/levels/best_score_3"},
+	{3, "../src/model/levels/best_score_4"}
+};
+
+inline std::map<int, std::string> LEVEL_PATH_MAP = {
+	{0, "../src/model/levels/level_1"},
+	{1, "../src/model/levels/level_2"},
+	{2, "../src/model/levels/level_3"},
+	{3, "../src/model/levels/level_4"}
+};
+
+inline std::map<int, char> POWER_UP_TO_LETTER_MAP = {
+
+	{1, 'L'},
+	{2, 'R'},
+	{3, 'C'},
+	{4, 'S'},
+	{5, 'I'},
+	{6, 'P'}
+
+};

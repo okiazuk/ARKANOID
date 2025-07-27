@@ -31,11 +31,12 @@ private:
 	void processGameInput(Racket& racket, Ball& ball);
 	void processMenuInput();
 	void checkWallCollisions(Ball& ball);
-	void checkBrickCollisions(Ball& ball,  Board& board, GameStats& stats);
+	void checkBrickCollisions(Ball &ball, Board &board, GameStats &stats, Racket& racket);
 	void checkRacketCollisions(Ball& ball, Racket& racket);
+	bool powerUpHitRacket(PowerUps& power_up, Racket& racket);
 	bool hasWon(Board& board);
 	void resetGame(GameStats &stats, Ball &ball, Racket &racket, Board &board);
 	void processEndGameInput();
-	void saveBestScore(GameStats& stats);
+	void saveBestScore(GameStats& stats, Board& board);
 
 };

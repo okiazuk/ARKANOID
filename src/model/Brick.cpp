@@ -2,25 +2,33 @@
 #include <iostream>
 
 // Initialize brick with default type and intact state
-Brick::Brick(int color)
+Brick::Brick(int color, PowerUps& power_up) : power_up_(power_up)
 {
-type_.color = BrickColor(color);
-if (type_.color == BrickColor::NONE){
-    destroyed_ = true;
-}else {destroyed_ = false;}
-type_.gained_points = getPointsFromColor(type_.color);
-type_.rgb_values = getRGBFromColor(type_.color);
-} 
+    type_.color = BrickColor(color);
+    if (type_.color == BrickColor::NONE){
+        destroyed_ = true;
+    }else {destroyed_ = false;}
+    type_.gained_points = getPointsFromColor(type_.color);
+    type_.rgb_values = getRGBFromColor(type_.color);
+}  
 
-Brick::~Brick() { }
 
-void Brick::hit()
+Brick::~Brick() {std::cout << "[BRICK] a brick has been deleted" << std::endl; }
+
+void Brick::hit(float brick_middle_x, float brick_middle_y)
+
+
 {
     if (type_.color != BrickColor::SILVER && type_.color != BrickColor::GOLD && type_.color != BrickColor::NONE){
         std::cout << "[BRICK] you destroyed a brick" << std::endl;
         destroyed_ = true;
         type_.color = BrickColor::NONE;
         type_.gained_points = 0;
+    
+        if (power_up_.getType() != PowerType::NONE){
+            power_up_.setPositions(brick_middle_x, brick_middle_y);
+        }
+
     } else if (type_.color == BrickColor::SILVER){
         type_.color = BrickColor::SILVER_MODIFIED;
         type_.rgb_values = getRGBFromColor(type_.color);
@@ -38,6 +46,16 @@ const BrickType& Brick::getBrickType() const {
     return type_;
 }
 
+
+PowerUps& Brick::getPowerUp()  {
+
+    return power_up_;
+}
+
+const PowerUps& Brick::getPowerUp() const  {
+
+    return power_up_;
+}
 
 const int Brick::getPointsFromColor(BrickColor& color) const {  
     switch (color) {

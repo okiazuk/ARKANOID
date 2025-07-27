@@ -9,7 +9,7 @@ struct BallPositions
 
 struct BallDirection
 {
-    float x = 0;
+    float x = BALL_DEFAULT_DX;
     float y = static_cast<float>(-BALL_DEFAULT_SPEED);
 };
 

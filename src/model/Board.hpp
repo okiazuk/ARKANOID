@@ -11,11 +11,13 @@ struct BoardParameters{
 };
 
 
+inline std::vector<std::vector<Brick>> default_level = loadLevel(LEVEL_PATH_MAP[0]);
+
 
 class Board {
 public:
-    Board(std::vector<std::vector<Brick>>& level, int level_number = 0);
-    void changeLevel(const std::vector<std::vector<Brick>>& level);
+    Board(std::vector<std::vector<Brick>>& level = default_level, int level_number = 0);
+    void changeLevel(const std::vector<std::vector<Brick>>& level, int level_number);
     void reset();
     std::vector<std::vector<Brick>>& getBricks() const;
     const int getLevelNumber() const;

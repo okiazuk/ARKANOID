@@ -18,23 +18,42 @@ inline std::vector<std::vector<Brick>> loadLevel(const std::string& filename) {
     std::string line;
     while (std::getline(file, line)) {
         std::vector<Brick> row;
+
+        int length_decoded = 1;
         
         for (char c : line) {
             int brick_color;
-            if (c == 'x'){
-                brick_color = 11;
-            }else if (c == 'g'){
-                brick_color = 10;
-            } else{
-                brick_color = c - '0';  // '1' becomes 1, '2' becomes 2, etc.
+
+            if (c == ' ') {
+                continue;
             }
-            
-            row.emplace_back(brick_color);
-        }
+
+            if (length_decoded == 1){
+                // CHECK FIRST CHARACTER
+                if (c == 'x'){
+                    brick_color = 11;
+                }else if (c == 'g'){
+                    brick_color = 10;
+                } else{
+                    brick_color = c - '0';  // '1' becomes 1, '2' becomes 2, etc.
+                }
+            } else {
+                //CHECK SECOND CHARACTER 
+                int power = c - '0';
+
+                PowerUps power_up = PowerUps(power);
+                row.emplace_back(brick_color, power_up);
+
+                length_decoded = 0;
+                }
+
+            length_decoded++;
+
+    }
         
-        if (!row.empty()) {
-            level.push_back(row);
-        }
+    if (!row.empty()) {
+        level.push_back(row);
+    }
     }
     
     file.close();

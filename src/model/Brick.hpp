@@ -1,6 +1,7 @@
 #pragma once
 #include "../utils/Configs.hpp"
 #include <vector>
+#include "PowerUps.hpp"
 
 enum class BrickColor
 {
@@ -16,7 +17,7 @@ enum class BrickColor
     SILVER,          // 8
     SILVER_MODIFIED, // 9
     GOLD,            // g
-    NONE             // n
+    NONE             // x
 
 };
 
@@ -28,6 +29,8 @@ struct BrickType
     int width = (BRICK_DEFAULT_WIDTH);
     int height =(BRICK_DEFAULT_HEIGHT);
 };
+
+
 
 inline const std::vector<int> WHITE_VEC = {255, 255, 255};
 inline const std::vector<int> ORANGE_VEC = {255, 165, 0};
@@ -41,19 +44,25 @@ inline const std::vector<int> SILVER_VEC = {192, 192, 192};
 inline const std::vector<int> SILVER_MODIFIED_VEC = {140, 140, 150};
 inline const std::vector<int> GOLD_VEC = {255, 215, 0};
 inline const std::vector<int> BLACKGROUND_VEC = {0, 0, 0};
+inline const std::vector<int> PURPLE_UP_VEC = {147, 112, 219}; // Bright purple for power-ups
 
 class Brick
 {
 public:
-    Brick(int color);         // constructor
+    Brick(int color, PowerUps& power_up);      // constructor
     ~Brick();                 // destructor
-    void hit();               // when a brick is hit by a ball
+    void hit(float brick_middle_x, float brick_middle_y);               // when a brick is hit by a ball
     bool isDestroyed() const; // check if destroyed
     const BrickType &getBrickType() const;
+    const PowerUps& getPowerUp() const;  
+    PowerUps& getPowerUp();              
+    
 
 private:
     const int getPointsFromColor(BrickColor &color) const;
     const std::vector<int> &getRGBFromColor(BrickColor &color) const;
     bool destroyed_ = false;
     BrickType type_;
+    PowerUps power_up_;
+
 };

@@ -42,6 +42,14 @@ void GameScreen::drawInGame(const Board &board, const Ball &ball, const Racket &
             const int brick_height = brick.getBrickType().height;
             const std::vector<int> &brick_rgb = brick.getBrickType().rgb_values;
 
+
+
+            const PowerUps& power_up = brick.getPowerUp();
+            const PowerUpPositions power_up_pos = power_up.getPositions();
+            const PowerType power_type = power_up.getType();
+            const int power_up_pos_x = static_cast<int>(power_up_pos.x);
+            const int power_up_pos_y = static_cast<int>(power_up_pos.y);
+            const int power_up_speed = static_cast<int>(power_up.getParameters().speed);
             if (!brick.isDestroyed() && brick_color != BrickColor::NONE)
             {
                 int x1 = c * brick_width;
@@ -54,6 +62,25 @@ void GameScreen::drawInGame(const Board &board, const Ball &ball, const Racket &
 
                 // Draw brick outline
                 al_draw_rectangle(x1, y1, x2, y2, al_map_rgb(BLACKGROUND_VEC[0], BLACKGROUND_VEC[1], BLACKGROUND_VEC[2]), 2.0);
+                
+                // Draw a letter in the middle of the brick
+                int center_x = x1 + brick_width / 2;
+                int center_y = y1 + brick_height / 2;
+                
+                char letter = POWER_UP_TO_LETTER_MAP[static_cast<int>(power_type)];
+                const char* letter_ptr = &letter;
+                
+                // Draw the letter centered in the brick
+                al_draw_text(font_, al_map_rgb(BLACKGROUND_VEC[0], BLACKGROUND_VEC[1], BLACKGROUND_VEC[2]), center_x, 
+                            center_y - al_get_font_line_height(font_)/2, ALLEGRO_ALIGN_CENTER, letter_ptr);
+            } else {
+                if (power_type != PowerType::NONE) {
+                    al_draw_filled_circle(
+                        power_up_pos_x,
+                        power_up_pos_y,
+                        power_up_speed,
+                        al_map_rgb(PURPLE_UP_VEC[0], PURPLE_UP_VEC[1], PURPLE_UP_VEC[2]));
+                }
             }
         }
     }
@@ -118,9 +145,10 @@ void GameScreen::drawUI(const GameStats &stats, const Board& board)
                  0, score_text);
 
     
+    const int level_number = board.getLevelNumber();
     // Print Best Score
     char best_score_text[50];
-    sprintf(best_score_text, "Best Score: %d", loadScore(SCORE_PATH));
+    sprintf(best_score_text, "Best Score: %d", loadScore(BEST_SCORE_PATH_MAP.at(level_number)));
     al_draw_text(font_, al_map_rgb(WHITE_VEC[0], WHITE_VEC[0], WHITE_VEC[0]), UI_TEXT_INFO_WIDTH_BETWEEN_WALLS*7, UI_TEXT_INFO_HEIGHT,
                  0, best_score_text);
 
@@ -182,26 +210,37 @@ void GameScreen::drawEndGame(const GameStats& stats)
         al_draw_text(font_, al_map_rgb(WHITE_VEC[0], WHITE_VEC[1], WHITE_VEC[2]), 
                 (SCREEN_WIDTH - scaled_width) /6, (SCREEN_HEIGHT/6), 0, "GAME OVER");
 
+        // Scale down a bit for other text
+        al_identity_transform(&scale_transform);
+        al_scale_transform(&scale_transform, 2.0, 2.0);
+        al_use_transform(&scale_transform);
+
+
+
+        base_width = al_get_text_width(font_, "Press any key to restart");
+        scaled_width = base_width * 2;
+        al_draw_text(font_, al_map_rgb(WHITE_VEC[0], WHITE_VEC[1], WHITE_VEC[2]), 
+                (SCREEN_WIDTH - scaled_width) / 4, (SCREEN_HEIGHT/4) + UI_TEXT_INFO_HEIGHT*2, 0, "Press any key to restart");
+
     }else {
         int base_width = al_get_text_width(font_, "VICTORY");
         int scaled_width = base_width * 3;
 
         al_draw_text(font_, al_map_rgb(WHITE_VEC[0], WHITE_VEC[1], WHITE_VEC[2]), 
         (SCREEN_WIDTH - scaled_width) /6, (SCREEN_HEIGHT/6), 0, "VICTORY");
+
+        // Scale down a bit for other text
+        al_identity_transform(&scale_transform);
+        al_scale_transform(&scale_transform, 2.0, 2.0);
+        al_use_transform(&scale_transform);
+
+
+        base_width = al_get_text_width(font_, "Press any key to go next level");
+        scaled_width = base_width * 2;
+        al_draw_text(font_, al_map_rgb(WHITE_VEC[0], WHITE_VEC[1], WHITE_VEC[2]), 
+                (SCREEN_WIDTH - scaled_width) / 4, (SCREEN_HEIGHT/4) + UI_TEXT_INFO_HEIGHT*2, 0, "Press any key to go next level");
     }
 
-    // Scale down a bit for other text
-    al_identity_transform(&scale_transform);
-    al_scale_transform(&scale_transform, 2.0, 2.0);
-    al_use_transform(&scale_transform);
-
-
-    int base_width = al_get_text_width(font_, "Press any key to restart");
-    int scaled_width = base_width * 2;
-    
-    // Add restart instruction
-    al_draw_text(font_, al_map_rgb(WHITE_VEC[0], WHITE_VEC[1], WHITE_VEC[2]), 
-                 (SCREEN_WIDTH - scaled_width) / 4, (SCREEN_HEIGHT/4) + UI_TEXT_INFO_HEIGHT*2, 0, "Press any key to restart");
 
     // Restore original transform
     al_use_transform(&transform);

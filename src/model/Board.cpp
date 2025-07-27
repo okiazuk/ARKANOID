@@ -1,5 +1,3 @@
-, 
-
 #include "Board.hpp"
 
 Board::Board(std::vector<std::vector<Brick>>& game_level, int level_number)
@@ -30,10 +28,11 @@ void Board::reset(){
 }
 
 
-void Board::changeLevel(const std::vector<std::vector<Brick>>& game_level) 
+void Board::changeLevel(const std::vector<std::vector<Brick>>& game_level, int level_number) 
 {
     game_level_ = game_level;
     old_game_level_ = game_level;
+    level_number_ = level_number;
     
 }
 
