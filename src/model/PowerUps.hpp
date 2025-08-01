@@ -37,6 +37,8 @@ struct PowerUpParamaters // same parameters as ball
 };
 
 
+
+
 class PowerUps{
 
 

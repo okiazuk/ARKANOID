@@ -6,16 +6,16 @@
 enum class BrickColor
 {
 
-    WHITE,           // 0
-    ORANGE,          // 1
-    CYAN,            // 2
-    GREEN,           // 3
-    RED,             // 4
-    BLUE,            // 5
-    MAGENTA,         // 6
-    YELLOW,          // 7
-    SILVER,          // 8
-    SILVER_MODIFIED, // 9
+    WHITE,           // 0 - 50pts
+    ORANGE,          // 1 - 60pts
+    CYAN,            // 2 - 70pts
+    GREEN,           // 3 - 80pts
+    RED,             // 4 - 90pts
+    BLUE,            // 5 - 100pts
+    MAGENTA,         // 6 - 110pts
+    YELLOW,          // 7 - 120pts
+    SILVER,          // 8 - 200pts
+    SILVER_MODIFIED,  // brick not used directly because it comes from 8
     GOLD,            // g
     NONE             // x
 
@@ -51,7 +51,7 @@ class Brick
 public:
     Brick(int color, PowerUps& power_up);      // constructor
     ~Brick();                 // destructor
-    void hit(float brick_middle_x, float brick_middle_y);               // when a brick is hit by a ball
+    void hit(float brick_middle_x, float brick_middle_y);   // when a brick is hit by a ball
     bool isDestroyed() const; // check if destroyed
     const BrickType &getBrickType() const;
     const PowerUps& getPowerUp() const;  

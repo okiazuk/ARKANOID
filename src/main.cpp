@@ -15,6 +15,8 @@ Description: breakout like game in cpp using allegro GUI
 #include "model/Board.hpp"
 #include "model/GameStats.hpp"
 #include "model/Racket.hpp"
+#include "model/Balls.hpp"
+#include "model/Lasers.hpp"
 #include "view/GameScreen.hpp"
 #include "utils/LevelLoader.hpp"
 #include <map>
@@ -32,8 +34,9 @@ int main(int argc, char* argv[]) {
     // Initialize game objects
 
     Board board = Board();
-    Ball ball = Ball();
+    Balls balls = Balls();
     Racket racket = Racket();
+    Lasers lasers = Lasers();
     GameStats stats = GameStats();
     GameScreen view = GameScreen();
     GameControl controller = GameControl();
@@ -47,9 +50,9 @@ int main(int argc, char* argv[]) {
     // MAIN LOOP
     while (controller.isRunning()) {
 
-        controller.processInputs(racket, ball, board, stats);
+        controller.processInputs(racket, balls, board, stats, lasers);
 
-        view.draw(board, ball, racket, stats);
+        view.draw(board, balls, racket, stats, lasers);
     }
 
     view.destroy();

@@ -31,8 +31,11 @@ void Board::reset(){
 void Board::changeLevel(const std::vector<std::vector<Brick>>& game_level, int level_number) 
 {
     game_level_ = game_level;
-    old_game_level_ = game_level;
+    old_game_level_ = game_level; //copy to reset same lvl when game over
     level_number_ = level_number;
+
+    parameters_.width = game_level[0].size();
+    parameters_.height = game_level.size();
     
 }
 

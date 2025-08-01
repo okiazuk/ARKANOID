@@ -1,7 +1,7 @@
 #pragma once
 
 enum class GameStates {
-	MAIN_MENU,
+	WELCOME,
 	IN_GAME,
 	END_GAME,
 };

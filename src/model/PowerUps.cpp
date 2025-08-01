@@ -29,7 +29,6 @@ void PowerUps::setPositions(float x, float y){
 	positions_.y = y;
 }
 
-
 const PowerType& PowerUps::getType() const {
 
 	return power_type_;
@@ -50,7 +49,6 @@ const PowerUpParamaters& PowerUps::getParameters() const{
 void PowerUps::disappear() {
 
 power_type_ = PowerType::NONE;
-std::cout << "[POWER UPS[ a new power is being used" << std::endl;
 
 }
 

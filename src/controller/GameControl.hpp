@@ -4,6 +4,8 @@
 #include "../model/Board.hpp"
 #include "../model/Brick.hpp"
 #include "../model/GameStats.hpp"
+#include "../model/Balls.hpp"
+#include "../model/Lasers.hpp"
 #include "../model/Racket.hpp"
 #include "../utils/GameStates.hpp"
 #include "../utils/ScoreLoader.hpp"
@@ -12,31 +14,38 @@
 #include <math.h>
 #include <iostream>
 
-
-
-class GameControl {
+class GameControl
+{
 public:
-		void processInputs(Racket &racket, Ball &ball, Board& board, GameStats& stats);
-    void update(Board& board, Ball& ball, Racket& racket, GameStats& stats);
-		bool isRunning() const;
-		GameStates getGameState() const;
-		bool isBallLaunched() const;
+	GameControl() = default;
+	void processInputs(Racket &racket, Balls &balls, Board &board, GameStats &stats, Lasers& lasers);
+	void update(Board &board, Racket &racket, GameStats &stats, Balls& balls, Lasers& lasers);
+	bool isRunning() const;
+	GameStates getGameState() const;
 
 private:
 	ALLEGRO_KEYBOARD_STATE ks_;
+	bool space_pressed_ = false;
 	bool running_flag_ = true; // overall game is running by default
-	bool ball_launched_ = false; // whether the ball is launched or not
-	void handleBallLost(GameStats& stats, Ball& ball, Racket& racket, Board& board);
+	bool game_has_started_ = false;
+	bool laser_on_ = false;
+	int laser_counter_ = DEFAULT_NUMBER_OF_LASER;
+	bool release_ball_ = false;
+	bool ball_bounce_ = true;
+	bool power_interruption_ = false;
+	void handleBallLost(GameStats &stats, Racket &racket, Board &board, Balls& balls, Ball& ball, Lasers& lasers);
 
-	void processGameInput(Racket& racket, Ball& ball);
+	void processGameInput(GameStats& stats, Racket &racket, Balls &balls, Lasers& lasers, Board& board);
 	void processMenuInput();
-	void checkWallCollisions(Ball& ball);
-	void checkBrickCollisions(Ball &ball, Board &board, GameStats &stats, Racket& racket);
-	void checkRacketCollisions(Ball& ball, Racket& racket);
-	bool powerUpHitRacket(PowerUps& power_up, Racket& racket);
-	bool hasWon(Board& board);
-	void resetGame(GameStats &stats, Ball &ball, Racket &racket, Board &board);
+	void checkWallCollisions(Ball &ball);
+	void checkBrickCollisions(Balls &balls, Board &board, GameStats &stats, Racket &racket, Lasers& lasers);
+	void checkRacketCollisions(Ball &ball, Racket &racket);
+	bool powerUpHitRacket(PowerUps &power_up, Racket &racket);
+	bool hasWon(Board &board);
+	void resetGame(GameStats &stats, Balls &balls, Racket &racket, Board &board, Lasers& lasers);
 	void processEndGameInput();
-	void saveBestScore(GameStats& stats, Board& board);
-
+	void saveBestScore(GameStats &stats, Board &board);
+	void handlePowerUps(Brick &brick, Racket &racket, Ball &ball, GameStats &stats, Balls& balls);
 };
+
+

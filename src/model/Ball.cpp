@@ -2,10 +2,16 @@
 
 #include <iostream>
 
+
+Ball::~Ball(){
+  std::cout <<"[BALL] DELETED" << std::endl;
+
+}
+
 void Ball::update()
 {
-  positions_.x += direction_.x;
-  positions_.y += direction_.y;
+  positions_.x += direction_.x*parameters_.speed;
+  positions_.y += direction_.y*parameters_.speed;
 }
 
 void Ball::setPosition(float x, float y)
@@ -34,21 +40,22 @@ void Ball::setBallSpeed(float speed)
   parameters_.speed = speed;
 }
 
-bool Ball::isLost() const
+
+bool Ball::isLost()
 {
-  if (positions_.y - parameters_.radius > SCREEN_HEIGHT)
-  {
-    return true;
-  }
-  else
-  {
-    return false;
-  }
+
+  bool is_out = positions_.y - parameters_.radius > SCREEN_HEIGHT? true : false;
+  is_out_ = is_out;
+  return is_out_;
 }
 
-void Ball::reset()
+void Ball::reset(bool direction)
 {
 
-  direction_ = BallDirection{};
+  if (direction){
+    direction_ = BallDirection{};
+  }
   parameters_ = BallParamaters{};
+
+  
 }

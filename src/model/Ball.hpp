@@ -1,5 +1,6 @@
 #pragma once
 #include "../utils/Configs.hpp"
+#include <math.h>
 
 struct BallPositions
 {
@@ -9,8 +10,8 @@ struct BallPositions
 
 struct BallDirection
 {
-    float x = BALL_DEFAULT_DX;
-    float y = static_cast<float>(-BALL_DEFAULT_SPEED);
+    float x = static_cast<float>(BALL_DEFAULT_DX);
+    float y = static_cast<float>(BALL_DEFAULT_DY);
 };
 
 struct BallParamaters
@@ -22,10 +23,11 @@ struct BallParamaters
 class Ball
 {
 public:
-    Ball() = default;
+    Ball() = default;   
+    ~Ball();
     void update();
-    bool isLost() const;
-    void reset();
+    bool isLost();
+    void reset(bool direction=true);
     void setPosition(float x, float y = static_cast<float>(BALL_BOTTOM_POSITION));
     void setDirection(float dx, float dy);
     void setRadius(float radius);
@@ -38,4 +40,6 @@ private:
     BallPositions positions_;
     BallDirection direction_;
     BallParamaters parameters_;
+    bool is_out_ = false;
+    
 };

@@ -2,7 +2,7 @@
 #include <string>
 #include <map>
 /**
- * @brief using constexpr for better performance
+ * @brief using constexpr for better performance, more or less every global parameters to configure the game and its components
  */
 
 
@@ -21,7 +21,7 @@ constexpr int BRICK_DEFAULT_WIDTH = 80;
 constexpr int BRICK_DEFAULT_HEIGHT = 30;
 
 
-// 16:9 ratio
+// 16:9 ratio but can be changed if you want
 constexpr int SCREEN_WIDTH = NUMBER_OF_BRICKS_PER_ROW * BRICK_DEFAULT_WIDTH;
 constexpr int SCREEN_HEIGHT = 900;
 
@@ -37,20 +37,33 @@ constexpr int SEPARATION_LINE_HEIGHT = UI_TEXT_INFO_HEIGHT*6;
 constexpr int RACKET_DEFAULT_WIDTH = 120;
 constexpr int RACKET_DEFAULT_HEIGHT = 20;
 constexpr int RACKET_DEFAULT_SPEED = 5;
-constexpr int RACKET_BOTTOM_POSITION = 800;
+constexpr int RACKET_BOTTOM_POSITION = SCREEN_HEIGHT - 100;
 
 //--Ball--
 
 constexpr int BALL_BOTTOM_POSITION = 790;
 constexpr int BALL_DEFAULT_RADIUS = 7;
 constexpr int BALL_DEFAULT_SPEED = 6;
-constexpr int BALL_DEFAULT_DX = 0;
+constexpr int BALL_DEFAULT_DX = 0; 
+constexpr int BALL_DEFAULT_DY = -1;
+
+
+//--Laser--
+
+constexpr int LASER_DEFAULT_SPEED = 10;
+constexpr int LASER_DEFAULT_WIDTH = 2;
+constexpr int LASER_DEFAULT_HEIGHT = 30;
 
 //--Power Ups--
 
 constexpr int PU_DEFAULT_DY = 1;
 constexpr int PU_DEFAULT_DX = 0;
 constexpr int PU_DEFAULT_SPEED = 4;
+
+constexpr int DEFAULT_BALL_DECREASE = 1;
+constexpr int DEFAULT_RACKET_INCREASE = 10;
+constexpr int DEFAULT_NUMBER_OF_LASER = 3;
+constexpr int DEFAULT_NUMER_OF_EXTRA_BALLS = 2;
 
 
 //-Points gained per brick-
@@ -93,11 +106,11 @@ inline std::map<int, std::string> LEVEL_PATH_MAP = {
 
 inline std::map<int, char> POWER_UP_TO_LETTER_MAP = {
 
-	{1, 'L'},
-	{2, 'R'},
-	{3, 'C'},
-	{4, 'S'},
-	{5, 'I'},
-	{6, 'P'}
+	{1, 'L'}, //LASERS
+	{2, 'R'}, //RACKET GROW
+	{3, 'C'}, //CATCH
+	{4, 'S'}, //SLOW SPEED
+	{5, 'I'}, //INTERRUPTION
+	{6, 'P'} //PLAYER
 
 };

@@ -21,6 +21,7 @@ pkg_check_modules(ALLEGRO REQUIRED
 add_executable(ARKANOID
     src/main.cpp
     src/model/Ball.cpp
+    src/model/Balls.cpp
     src/model/Board.cpp
     src/model/Brick.cpp
     src/model/Racket.cpp
@@ -29,6 +30,8 @@ add_executable(ARKANOID
     src/view/GameScreen.cpp
     src/utils/GameStates.cpp
     src/model/PowerUps.cpp
+    src/model/Laser.cpp
+    src/model/Lasers.cpp
 )
 
 target_include_directories(ARKANOID PUBLIC
