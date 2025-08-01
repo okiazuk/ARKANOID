@@ -2,8 +2,8 @@
 #include "../utils/Configs.hpp"
 
 /**
- * @brief everything should const because we simply print from the model
- * model is using int and view is casting in int
+ * @brief everything should be const because we simply print from the model
+ * model is using float and view is casting in int
  */
 
 void GameScreen::draw(Board &board, Balls &balls, Racket &racket, GameStats &stats, Lasers& lasers)
@@ -44,9 +44,9 @@ void GameScreen::drawInGame(const Board &board, const Balls &balls, const Racket
             const PowerUps &power_up = brick.getPowerUp();
             const PowerUpPositions power_up_pos = power_up.getPositions();
             const PowerType power_type = power_up.getType();
-            const int power_up_pos_x = static_cast<int>(power_up_pos.x);
-            const int power_up_pos_y = static_cast<int>(power_up_pos.y);
-            const int power_up_speed = static_cast<int>(power_up.getParameters().speed);
+            const int power_up_pos_x = power_up_pos.x;
+            const int power_up_pos_y = power_up_pos.y;
+            const int power_up_speed = power_up.getParameters().speed;
             if (!brick.isDestroyed() && brick_color != BrickColor::NONE)
             {
                 int x1 = c * brick_width;
@@ -292,21 +292,18 @@ void GameScreen::drawEndGame(const GameStats &stats)
 bool GameScreen::init()
 {
 
-    // Initialize Allegro
     if (!al_init())
     {
         std::cout << "[GAMESCREEN] Error failed to initialize Allegro!" << std::endl;
         return false;
     }
 
-    // Install keyboard
     if (!al_install_keyboard())
     {
         std::cout << "[GAMESCREEN] Error failed to install keyboard!" << std::endl;
         return false;
     }
 
-    // Install mouse
 
     if (!al_install_mouse())
     {
@@ -314,21 +311,18 @@ bool GameScreen::init()
         return false;
     }
 
-    // Initialize primitives addon
     if (!al_init_primitives_addon())
     {
         std::cout << "[GAMESCREEN] Error failed to initialize primitives addon!" << std::endl;
         return false;
     }
 
-    // Initialize font addon (still needed for built-in font)
     if (!al_init_font_addon())
     {
         std::cout << "[GAMESCREEN] Error failed to initialize font addon!" << std::endl;
         return false;
     }
 
-    // Use built-in font instead of loading TTF
     font_ = al_create_builtin_font();
     if (!font_)
     {
@@ -336,7 +330,6 @@ bool GameScreen::init()
         return false;
     }
 
-    // Create display
     display_ = al_create_display(SCREEN_WIDTH, SCREEN_HEIGHT);
     if (!display_)
     {

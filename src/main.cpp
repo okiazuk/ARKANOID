@@ -24,8 +24,6 @@ Description: breakout like game in cpp using allegro GUI
 
 
 
-
-
 int main(int argc, char* argv[]) {
 
 
@@ -56,6 +54,9 @@ int main(int argc, char* argv[]) {
     }
 
     view.destroy();
+
+
+    std::cout << "[MAIN] EXITING GAME" << std::endl;
     return 0;
 }
 

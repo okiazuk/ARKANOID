@@ -15,16 +15,16 @@ void GameControl::processInputs(Racket &racket, Balls &balls, Board &board, Game
     else if (CURRENT_GAME_STATE == GameStates::IN_GAME)
 
     {
-
         if(!game_has_started_){
             balls.createBall();
-            Ball* ball = balls.getBalls()[0];
+            std::unique_ptr<Ball>& ball = balls.getBalls()[0];
             ball->setPosition(racket.getPositions().x + (racket.getParameters().width / 2));
             ball->setDirection(BALL_DEFAULT_DX, BALL_DEFAULT_DY);
             game_has_started_ = true;
-        }
+        }else{
             update(board, racket, stats, balls, lasers);
             processGameInput(stats, racket, balls, lasers, board);
+        }
     }
     else if (CURRENT_GAME_STATE == GameStates::END_GAME)
     {
@@ -161,25 +161,38 @@ void GameControl::processEndGameInput()
 void GameControl::update(Board &board, Racket &racket, GameStats &stats, Balls& balls, Lasers& lasers)
 {
 
-    // Update balls that are not lost
-    for (auto* ball : balls.getBalls()) {
+    std::vector<Ball*> lost_ball; // temporary vector of pointer in stack
+    std::vector<Laser*> lost_laser; 
+
+    
+    for (auto& ball : balls.getBalls()) {
         if (!ball->isLost()) {
             ball->update();
             checkWallCollisions(*ball);
             checkRacketCollisions(*ball, racket);
         } else {
-            handleBallLost(stats, racket, board, balls, *ball, lasers);
+            lost_ball.push_back(ball.get());
         }
     }
     
-
-    for (auto* laser: lasers.getLasers()){
+    for (auto& laser: lasers.getLasers()){
         if(!laser->isLost()){
             laser->update();
         }else {
-            lasers.removeLaser(*laser);
+            lost_laser.push_back(laser.get());
         }
     }
+
+    // SECOND LOOP TO HANDLE LOST BALL WITHOUT SEGMENTATION FAULT (if we remove ball during iteration it causes problems..)
+    for (auto* ball : lost_ball) {
+        handleBallLost(stats, racket, board, balls, *ball, lasers);
+    }
+
+
+    for (auto* laser: lost_laser){
+        lasers.removeLaser(*laser);
+    }
+
     checkBrickCollisions(balls, board, stats, racket, lasers);
 
 
@@ -195,6 +208,8 @@ void GameControl::update(Board &board, Racket &racket, GameStats &stats, Balls& 
     }
 }
 
+
+
 void GameControl::checkWallCollisions(Ball &ball)
 {
     const BallDirection &direction = ball.getDirection();
@@ -203,7 +218,7 @@ void GameControl::checkWallCollisions(Ball &ball)
     const float ball_speed = ball.getParameters().speed;
 
     // HANDLING SCREEN COLLISIONS
-    if (ball_pos.x + ball_radius + ball_speed >= SCREEN_WIDTH || ball_pos.x - ball_radius - ball_speed <= 0)
+    if (ball_pos.x + ball_radius >= SCREEN_WIDTH || ball_pos.x - ball_radius <= 0)
     {
         ball.setDirection(-direction.x, direction.y);
     }
@@ -228,10 +243,10 @@ void GameControl::checkRacketCollisions(Ball &ball, Racket &racket)
 
     if ((ball_pos.y + ball_radius >= racket_pos.y) &&
         (ball_pos.y + ball_radius <= racket_pos.y + racket_param.height) &&
-        ((ball_pos.x + ball_radius >= racket_pos.x) && // check hit from left side
+        ((ball_pos.x >= racket_pos.x) && // check hit from left side
              (ball_pos.x <= racket_pos.x + racket_param.width) ||
          ((ball_pos.x >= racket_pos.x) && // check hit from right side
-          (ball_pos.x - ball_radius <= racket_pos.x + racket_param.width))))
+          (ball_pos.x <= racket_pos.x + racket_param.width))))
 
     {
         float racket_hit_x = ball_pos.x - racket_pos.x;
@@ -373,7 +388,7 @@ void GameControl::handlePowerUps(Brick &brick, Racket &racket, Ball &ball, GameS
                 laser_on_ = false;
 
                 power_interruption_ = true;
-                for (int i=0; i < DEFAULT_NUMER_OF_EXTRA_BALLS; i++){
+                for (int i=1; i < DEFAULT_NUMER_OF_BALLS; i++){
                     balls.createBall(ball_pos.x+i*2, ball_pos.y, ball_dir.x, ball_dir.y);
                 }
 
@@ -449,7 +464,7 @@ void GameControl::checkBrickCollisions(Balls &balls, Board &board, GameStats &st
             const float brick_top = r * brick_height + SEPARATION_LINE_HEIGHT;
             const float brick_bottom = brick_top + brick_height;
 
-            for (auto* laser : lasers.getLasers()) {
+            for (auto& laser : lasers.getLasers()) {
                 if (brick.isDestroyed()) {
                     continue;
                 }
@@ -582,35 +597,28 @@ bool GameControl::isRunning() const
 
 void GameControl::handleBallLost(GameStats &stats, Racket &racket, Board &board, Balls& balls, Ball& ball, Lasers& lasers)
 {
-
     const int lives = stats.getBasicInfos().lives;
 
-    if(balls.getBalls().size() > 1){
+    if(balls.getBalls().size() > 1) {
         balls.removeBall(ball);
-        if(balls.getBalls().size()  == 1){
+        if(balls.getBalls().size() == 1) {
             std::cout << "[INTERRUPTION] Power OFF" << std::endl;
             power_interruption_ = false;
         }
-
-    } else if (lives > 1)
-    {
+    } else if (lives > 1) {
         stats.loseLife();
         ball.setDirection(BALL_DEFAULT_DX, BALL_DEFAULT_DY);
         ball.setPosition(racket.getPositions().x + (racket.getParameters().width / 2));
         release_ball_ = false;
-    }
-    else
-    {
+    } else {
         std::cout << "[GAME CONTROL] GAME OVER" << std::endl;
         saveBestScore(stats, board);
-        resetGame(stats, balls, racket, board, lasers);
-        stats.setGameOverFlag(true);
         CURRENT_GAME_STATE = GameStates::END_GAME;
+        stats.setGameOverFlag(true);
+        resetGame(stats, balls, racket, board, lasers);
         release_ball_ = false;
-
     }
 }
-
 void GameControl::resetGame(GameStats &stats, Balls &balls, Racket &racket, Board &board, Lasers& lasers)
 {
     stats.reset();

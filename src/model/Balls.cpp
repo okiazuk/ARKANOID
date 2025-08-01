@@ -3,34 +3,26 @@
 #include <memory>
 
 
-Balls::Balls()
-{
-}
 
-Balls::~Balls() {
-    for (Ball* ball : balls_) {
-        delete ball;
-    }
-}
 
 
 void Balls::createBall(float x, float y, float dx, float dy)
 {
-    Ball* new_ball = new Ball();
+    auto new_ball = std::make_unique<Ball>();  // Creates a unique_ptr
     new_ball->setPosition(x, y);
     new_ball->setDirection(dx, dy);
-    balls_.push_back(new_ball);
+    balls_.push_back(std::move(new_ball));  // Move ownership to the vector
 }
 
 
-std::vector<Ball*>& Balls::getBalls()
+std::vector<std::unique_ptr<Ball>>& Balls::getBalls()
 {
 	return balls_;
 
 }
 
 
-const std::vector<Ball*>& Balls::getBalls() const {
+const std::vector<std::unique_ptr<Ball>>& Balls::getBalls() const {
 	return balls_;
 
 }
@@ -38,22 +30,15 @@ const std::vector<Ball*>& Balls::getBalls() const {
 
 
 void Balls::reset(){
-    for (auto& ball: balls_){
-        delete ball;
-    }
     balls_.clear();
 }
 
 
-void Balls::removeBall(const Ball& ball){
+void Balls::removeBall(const Ball& ball)
+{
     auto it = std::remove_if(balls_.begin(), balls_.end(),
-                             [&ball](const Ball* b) {
-                                 if (b == &ball) {
-                                     delete b;
-                                     return true;
-                                 }
-                                 return false;
-                             });
+        [&ball](const std::unique_ptr<Ball>& b) {
+            return b.get() == &ball;  
+        });
     balls_.erase(it, balls_.end());
-
 }

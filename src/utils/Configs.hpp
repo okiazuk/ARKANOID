@@ -63,7 +63,7 @@ constexpr int PU_DEFAULT_SPEED = 4;
 constexpr int DEFAULT_BALL_DECREASE = 1;
 constexpr int DEFAULT_RACKET_INCREASE = 10;
 constexpr int DEFAULT_NUMBER_OF_LASER = 3;
-constexpr int DEFAULT_NUMER_OF_EXTRA_BALLS = 2;
+constexpr int DEFAULT_NUMER_OF_BALLS = 3;
 
 
 //-Points gained per brick-
