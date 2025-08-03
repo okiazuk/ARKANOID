@@ -24,7 +24,7 @@ public:
     void setPosition(float x);
     const RacketPositions &getPositions() const;
     const RacketParameters &getParameters() const;
-    void setParameters(int width, int height, int speed); // if in the future we want to customize the racket 
+    void setParameters(int width, int height, int speed); // if in the future we want to customize the racket
 
 private:
     RacketPositions positions_;

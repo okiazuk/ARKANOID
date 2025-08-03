@@ -20,6 +20,10 @@
 \author{David de Meester de Ravestein}
 \date{\today}
 
+
+\renewcommand*{\contentsname}{Table des matières}
+\renewcommand{\abstractname}{Introduction}
+ 
 % --- BEGIN DOCUMENT ---
 \begin{document}
 
@@ -30,7 +34,21 @@ Rapport dans le cadre du projet du cours INFO-F202. Reprend les informations ess
 \end{abstract}
 
 \tableofcontents
+
 \newpage
+
+\section{Environnement et Prérequis}
+
+Pour pouvoir profiter du jeu, il faut être sur Linux, avoir GCC ou Clang et Cmake d'installés. Cmake est un environnemnt de build qui est vachement pratique pour les projets de taille moyenne.
+
+\section{Compilation et execution}
+
+Voici les commandes à taper pour compiler et executer le jeu;
+\begin{verbatim}
+mkdir build && cd build
+cmake ..
+cmake --build .
+\end{verbatim}
 
 \section{Tâches réalisées}
 
@@ -55,9 +73,6 @@ Rapport dans le cadre du projet du cours INFO-F202. Reprend les informations ess
 \subsection{Controller}
 
 \includegraphics[width=\textwidth]{controller.png}
-
-
-
 
 
 \section{Logique de jeu}

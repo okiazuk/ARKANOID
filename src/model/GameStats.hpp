@@ -2,19 +2,19 @@
 #include "../utils/Configs.hpp"
 #include <string>
 
-
-struct BasicInfo {
+struct BasicInfo
+{
     int score = 0;
     int lives = DEFAULT_NUMBER_OF_LIVES;
     bool game_over = false;
 };
 
-
-class GameStats {
+class GameStats
+{
 public:
     GameStats() = default;
 
-    const BasicInfo& getBasicInfos() const;
+    const BasicInfo &getBasicInfos() const;
     void addScore(int points);
     void loseLife();
     void gainLife();

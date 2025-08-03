@@ -17,7 +17,7 @@
  * @param stats The current game statistics (score, lives, etc.).
  * @param lasers The collection of lasers shot by the racket.
  */
-void GameControl::processInputs(Racket &racket, Balls &balls, Board &board, GameStats &stats, Lasers& lasers)
+void GameControl::processInputs(Racket &racket, Balls &balls, Board &board, GameStats &stats, Lasers &lasers)
 {
     if (CURRENT_GAME_STATE == GameStates::WELCOME)
     {
@@ -25,14 +25,17 @@ void GameControl::processInputs(Racket &racket, Balls &balls, Board &board, Game
     }
     else if (CURRENT_GAME_STATE == GameStates::IN_GAME)
     {
-        if(!game_has_started_){
+        if (!game_has_started_)
+        {
             // Setting default ball, positions and direction
             balls.createBall();
-            std::unique_ptr<Ball>& ball = balls.getBalls()[0];
+            std::unique_ptr<Ball> &ball = balls.getBalls()[0];
             ball->setPosition(racket.getPositions().x + (racket.getParameters().width / 2));
             ball->setDirection(BALL_DEFAULT_DX, BALL_DEFAULT_DY);
             game_has_started_ = true;
-        } else {
+        }
+        else
+        {
             update(board, racket, stats, balls, lasers);
             processGameInput(stats, racket, balls, lasers, board);
         }
@@ -51,35 +54,45 @@ void GameControl::processInputs(Racket &racket, Balls &balls, Board &board, Game
  * @param balls The collection of balls.
  * @param lasers The collection of lasers.
  */
-void GameControl::update(Board &board, Racket &racket, GameStats &stats, Balls& balls, Lasers& lasers)
+void GameControl::update(Board &board, Racket &racket, GameStats &stats, Balls &balls, Lasers &lasers)
 {
-    std::vector<Ball*> lost_ball; // temporary vector of pointer in stack
-    std::vector<Laser*> lost_laser;
+    std::vector<Ball *> lost_ball; // temporary vector of pointer in stack
+    std::vector<Laser *> lost_laser;
 
-    for (auto& ball : balls.getBalls()) {
-        if (!ball->isLost()) {
+    for (auto &ball : balls.getBalls())
+    {
+        if (!ball->isLost())
+        {
             ball->update();
             checkWallCollisions(*ball);
             checkRacketCollisions(*ball, racket);
-        } else {
+        }
+        else
+        {
             lost_ball.push_back(ball.get());
         }
     }
 
-    for (auto& laser: lasers.getLasers()){
-        if(!laser->isLost()){
+    for (auto &laser : lasers.getLasers())
+    {
+        if (!laser->isLost())
+        {
             laser->update();
-        } else {
+        }
+        else
+        {
             lost_laser.push_back(laser.get());
         }
     }
 
     // Handle lost balls and lasers after iterating to avoid invalidating iterators
-    for (auto* ball : lost_ball) {
+    for (auto *ball : lost_ball)
+    {
         handleBallLost(stats, racket, board, balls, *ball, lasers);
     }
 
-    for (auto* laser: lost_laser){
+    for (auto *laser : lost_laser)
+    {
         lasers.removeLaser(*laser);
     }
 
@@ -109,7 +122,7 @@ void GameControl::update(Board &board, Racket &racket, GameStats &stats, Balls& 
  * @param lasers The collection of lasers.
  * @param board The game board.
  */
-void GameControl::processGameInput(GameStats& stats, Racket &racket, Balls &balls, Lasers& lasers, Board& board)
+void GameControl::processGameInput(GameStats &stats, Racket &racket, Balls &balls, Lasers &lasers, Board &board)
 {
     al_get_keyboard_state(&ks_);
     const float racket_x = racket.getPositions().x;
@@ -120,7 +133,8 @@ void GameControl::processGameInput(GameStats& stats, Racket &racket, Balls &ball
 
     if (!release_ball_)
     {
-        for (auto& ball: balls.getBalls()) {
+        for (auto &ball : balls.getBalls())
+        {
             const float ball_x = ball->getPositions().x;
             const float delta = ball_x - (racket_x + (racket_width / 2));
             ball->setPosition(racket.getPositions().x + (racket_width / 2) + delta);
@@ -134,7 +148,7 @@ void GameControl::processGameInput(GameStats& stats, Racket &racket, Balls &ball
             release_ball_ = true;
             if (laser_on_)
             {
-                lasers.createLaser(racket.getPositions().x + racket_width/2);
+                lasers.createLaser(racket.getPositions().x + racket_width / 2);
                 lasers.setRemainingLaser(lasers.getRemainingLaser() - 1);
                 if (lasers.getRemainingLaser() == 0)
                 {
@@ -150,7 +164,8 @@ void GameControl::processGameInput(GameStats& stats, Racket &racket, Balls &ball
         space_pressed_ = false;
     }
 
-    if (al_key_down(&ks_, ALLEGRO_KEY_L)){
+    if (al_key_down(&ks_, ALLEGRO_KEY_L))
+    {
         running_flag_ = false;
         resetGame(stats, balls, racket, board, lasers);
     }
@@ -192,27 +207,35 @@ void GameControl::processEndGameInput()
  * @brief Checks for and handles racket movement input (mouse or keyboard).
  * @param racket The player's racket.
  */
-void GameControl::checkChangeInputControl(Racket& racket){
+void GameControl::checkChangeInputControl(Racket &racket)
+{
     const float racket_x = racket.getPositions().x;
     const int racket_speed = racket.getParameters().speed;
     const int racket_width = racket.getParameters().width;
 
-    if (mouse_control_) {
+    if (mouse_control_)
+    {
         ALLEGRO_MOUSE_STATE ms;
         al_get_mouse_state(&ms);
         int new_racket_x = ms.x - racket_width / 2;
 
-        if (new_racket_x < 0) new_racket_x = 0;
-        if (new_racket_x + racket_width > SCREEN_WIDTH) new_racket_x = SCREEN_WIDTH - racket_width;
+        if (new_racket_x < 0)
+            new_racket_x = 0;
+        if (new_racket_x + racket_width > SCREEN_WIDTH)
+            new_racket_x = SCREEN_WIDTH - racket_width;
         racket.setPosition(new_racket_x);
-    } else {
+    }
+    else
+    {
         if (al_key_down(&ks_, ALLEGRO_KEY_LEFT))
         {
-            if (racket_x - racket_speed >= 0) racket.moveLeft();
+            if (racket_x - racket_speed >= 0)
+                racket.moveLeft();
         }
         if (al_key_down(&ks_, ALLEGRO_KEY_RIGHT))
         {
-            if (racket_x + racket_width + racket_speed <= SCREEN_WIDTH) racket.moveRight();
+            if (racket_x + racket_width + racket_speed <= SCREEN_WIDTH)
+                racket.moveRight();
         }
     }
 }
@@ -225,20 +248,25 @@ void GameControl::checkChangeInputControl(Racket& racket){
  * @param balls The collection of balls.
  * @param racket The player's racket.
  */
-void GameControl::checkDebugInputs(Board& board, GameStats& stats, Lasers& lasers, Balls& balls, Racket& racket){
-    if (al_key_down(&ks_, ALLEGRO_KEY_K)){
+void GameControl::checkDebugInputs(Board &board, GameStats &stats, Lasers &lasers, Balls &balls, Racket &racket)
+{
+    if (al_key_down(&ks_, ALLEGRO_KEY_K))
+    {
         std::cout << "[GAME CONTROL] switching to keyboard/mouse for racket" << std::endl;
         mouse_control_ = !mouse_control_;
     }
 
-    if (al_key_down(&ks_, ALLEGRO_KEY_R)){
+    if (al_key_down(&ks_, ALLEGRO_KEY_R))
+    {
         int score_level = board.getLevelNumber();
         saveScore(0, BEST_SCORE_PATH_MAP[score_level]);
         std::cout << "[GAME CONTROL] reset best score" << std::endl;
     }
 
-    for (int i = ALLEGRO_KEY_0; i <= ALLEGRO_KEY_3; ++i) {
-        if (al_key_down(&ks_, i)) {
+    for (int i = ALLEGRO_KEY_0; i <= ALLEGRO_KEY_3; ++i)
+    {
+        if (al_key_down(&ks_, i))
+        {
             int level_num = i - ALLEGRO_KEY_0;
             resetGame(stats, balls, racket, board, lasers);
             std::vector<std::vector<Brick>> new_level = loadLevel(LEVEL_PATH_MAP[level_num]);
@@ -297,16 +325,22 @@ void GameControl::checkRacketCollisions(Ball &ball, Racket &racket)
         const int racket_middle = RACKET_DEFAULT_WIDTH / 2;
         float new_dx, new_dy;
 
-        if (racket_hit_x == racket_middle) {
+        if (racket_hit_x == racket_middle)
+        {
             new_dy = BALL_DEFAULT_DY;
             new_dx = BALL_DEFAULT_DX;
-        } else {
+        }
+        else
+        {
             float angle_rad;
-            if (racket_hit_x < racket_middle) {
+            if (racket_hit_x < racket_middle)
+            {
                 angle_rad = (30 + 120 * (1 - (racket_hit_x / racket_param.width))) * M_PI / 180.0;
                 new_dy = -sin(angle_rad);
                 new_dx = cos(angle_rad);
-            } else {
+            }
+            else
+            {
                 racket_hit_x = racket_param.width - racket_hit_x;
                 angle_rad = (30 + 120 * (1 - (racket_hit_x / racket_param.width))) * M_PI / 180.0;
                 new_dy = -sin(angle_rad);
@@ -315,19 +349,25 @@ void GameControl::checkRacketCollisions(Ball &ball, Racket &racket)
         }
         ball.setDirection(new_dx, new_dy);
 
-        if (ball_speed < BALL_DEFAULT_SPEED) {
+        if (ball_speed < BALL_DEFAULT_SPEED)
+        {
             ball.setBallSpeed(std::min(ball_speed + 0.5f, (float)BALL_DEFAULT_SPEED));
             std::cout << "[GAME CONTROL] ball is increasing speed: " << ball.getParameters().speed << std::endl;
         }
 
-        if (racket_param.width > RACKET_DEFAULT_WIDTH) {
+        if (racket_param.width > RACKET_DEFAULT_WIDTH)
+        {
             racket.setParameters(racket_param.width - DEFAULT_RACKET_INCREASE, racket_param.height, racket_param.speed);
         }
 
-        if (!ball_bounce_) {
-            if(ball_pos.x + ball_radius >= racket_pos.x + racket_param.width){
+        if (!ball_bounce_)
+        {
+            if (ball_pos.x + ball_radius >= racket_pos.x + racket_param.width)
+            {
                 ball.setPosition(racket_pos.x + racket_param.width - ball_radius);
-            } else if (ball_pos.x - ball_radius <= racket_pos.x){
+            }
+            else if (ball_pos.x - ball_radius <= racket_pos.x)
+            {
                 ball.setPosition(racket_pos.x + ball_radius);
             }
             ball.reset();
@@ -345,7 +385,7 @@ void GameControl::checkRacketCollisions(Ball &ball, Racket &racket)
  * @param racket The player's racket.
  * @param lasers The collection of lasers.
  */
-void GameControl::checkBrickCollisions(Balls &balls, Board &board, GameStats &stats, Racket &racket, Lasers& lasers)
+void GameControl::checkBrickCollisions(Balls &balls, Board &board, GameStats &stats, Racket &racket, Lasers &lasers)
 {
     const int board_height = board.getParameters().height;
     const int board_width = board.getParameters().width;
@@ -370,8 +410,10 @@ void GameControl::checkBrickCollisions(Balls &balls, Board &board, GameStats &st
  * @param c The column index of the brick.
  * @param r The row index of the brick.
  */
-void GameControl::checkLaserCollisions(Brick& brick, Lasers& lasers, GameStats& stats, int c, int r){
-    if (brick.isDestroyed()) return;
+void GameControl::checkLaserCollisions(Brick &brick, Lasers &lasers, GameStats &stats, int c, int r)
+{
+    if (brick.isDestroyed())
+        return;
 
     const int brick_width = brick.getBrickType().width;
     const int brick_height = brick.getBrickType().height;
@@ -380,13 +422,15 @@ void GameControl::checkLaserCollisions(Brick& brick, Lasers& lasers, GameStats& 
     const float brick_top = r * brick_height + SEPARATION_LINE_HEIGHT;
     const float brick_bottom = brick_top + brick_height;
 
-    for (auto& laser : lasers.getLasers()) {
+    for (auto &laser : lasers.getLasers())
+    {
         const float laser_x = laser->getPositions().x1;
         const float laser_y = laser->getPositions().y1;
 
         if (laser_x >= brick_left && laser_x <= brick_right &&
-            laser_y >= brick_top && laser_y <= brick_bottom) {
-            
+            laser_y >= brick_top && laser_y <= brick_bottom)
+        {
+
             const int brick_points = brick.getBrickType().gained_points;
             const float brick_middle_x = brick_left + (brick_width / 2.0f);
             const float brick_middle_y = brick_top + (brick_height / 2.0f);
@@ -410,8 +454,8 @@ void GameControl::checkLaserCollisions(Brick& brick, Lasers& lasers, GameStats& 
  * @param c The column index of the brick.
  * @param r The row index of the brick.
  */
-void GameControl::checkBallCollisions(Balls& balls, Racket& racket, Brick& brick, Lasers& lasers, GameStats& stats, bool vertical_collision, bool horizontal_collision, int c, int r){
-
+void GameControl::checkBallCollisions(Balls &balls, Racket &racket, Brick &brick, Lasers &lasers, GameStats &stats, bool vertical_collision, bool horizontal_collision, int c, int r)
+{
 
     const int brick_width = brick.getBrickType().width;
     const int brick_height = brick.getBrickType().height;
@@ -420,16 +464,18 @@ void GameControl::checkBallCollisions(Balls& balls, Racket& racket, Brick& brick
     const float brick_top = r * brick_height + SEPARATION_LINE_HEIGHT;
     const float brick_bottom = brick_top + brick_height;
 
-    for (auto& ball: balls.getBalls()){
+    for (auto &ball : balls.getBalls())
+    {
         const BallPositions ball_pos = ball->getPositions();
         const float ball_radius = ball->getParameters().radius;
         const float ball_speed = ball->getParameters().speed;
         const BallDirection &direction = ball->getDirection();
 
-          if (brick.isDestroyed()) {
-        handlePowerUps(brick, racket, *ball, stats, balls, lasers);
-        return;
-    }
+        if (brick.isDestroyed())
+        {
+            handlePowerUps(brick, racket, *ball, stats, balls, lasers);
+            return;
+        }
 
         float next_x = ball_pos.x + direction.x * ball_speed;
         float next_y = ball_pos.y + direction.y * ball_speed;
@@ -439,30 +485,37 @@ void GameControl::checkBallCollisions(Balls& balls, Racket& racket, Brick& brick
         if (next_x + ball_radius >= brick_left && next_x - ball_radius <= brick_right &&
             next_y + ball_radius >= brick_top && next_y - ball_radius <= brick_bottom)
         {
-            if (ball_pos.x + ball_radius >= brick_left && ball_pos.x - ball_radius <= brick_right) {
-                if ((direction.y > 0 && ball_pos.y + ball_radius <= brick_top) || (direction.y < 0 && ball_pos.y - ball_radius >= brick_bottom)) {
+            if (ball_pos.x + ball_radius >= brick_left && ball_pos.x - ball_radius <= brick_right)
+            {
+                if ((direction.y > 0 && ball_pos.y + ball_radius <= brick_top) || (direction.y < 0 && ball_pos.y - ball_radius >= brick_bottom))
+                {
                     vertical_collision = true;
                 }
             }
-            if (ball_pos.y + ball_radius >= brick_top && ball_pos.y - ball_radius <= brick_bottom) {
-                if ((direction.x > 0 && ball_pos.x + ball_radius <= brick_left) || (direction.x < 0 && ball_pos.x - ball_radius >= brick_right)) {
+            if (ball_pos.y + ball_radius >= brick_top && ball_pos.y - ball_radius <= brick_bottom)
+            {
+                if ((direction.x > 0 && ball_pos.x + ball_radius <= brick_left) || (direction.x < 0 && ball_pos.x - ball_radius >= brick_right))
+                {
                     horizontal_collision = true;
                 }
             }
 
             // Interesting algorithm to detect collision, using pythagore to check if nearest distance between brick and ball is less or equal to ball radius
-            if (!vertical_collision && !horizontal_collision) {
+            if (!vertical_collision && !horizontal_collision)
+            {
                 const float closest_x = std::max(brick_left, std::min(ball_pos.x, brick_right));
                 const float closest_y = std::max(brick_top, std::min(ball_pos.y, brick_bottom));
                 const float distance_x = ball_pos.x - closest_x;
                 const float distance_y = ball_pos.y - closest_y;
-                if (distance_x * distance_x + distance_y * distance_y <= ball_radius * ball_radius) {
+                if (distance_x * distance_x + distance_y * distance_y <= ball_radius * ball_radius)
+                {
                     horizontal_collision = true;
                     vertical_collision = true;
                 }
             }
-            
-            if (horizontal_collision || vertical_collision) {
+
+            if (horizontal_collision || vertical_collision)
+            {
                 const int brick_points = brick.getBrickType().gained_points;
                 const float brick_middle_x = brick_left + (brick_width / 2.0f);
                 const float brick_middle_y = brick_top + (brick_height / 2.0f);
@@ -513,10 +566,11 @@ bool GameControl::powerUpHitRacket(PowerUps &power_up, Racket &racket)
  * @param balls The collection of all balls.
  * @param lasers The collection of lasers.
  */
-void GameControl::handlePowerUps(Brick &brick, Racket &racket, Ball &ball, GameStats &stats, Balls& balls, Lasers& lasers)
+void GameControl::handlePowerUps(Brick &brick, Racket &racket, Ball &ball, GameStats &stats, Balls &balls, Lasers &lasers)
 {
     PowerUps &power_up = brick.getPowerUp();
-    if (power_interruption_ || power_up.getType() == PowerType::NONE) {
+    if (power_interruption_ || power_up.getType() == PowerType::NONE)
+    {
         return;
     }
 
@@ -526,45 +580,52 @@ void GameControl::handlePowerUps(Brick &brick, Racket &racket, Ball &ball, GameS
     {
         // Reset any existing temporary power-ups
         racket.reset();
-        ball.reset(false);
         ball_bounce_ = true;
         laser_on_ = false;
         release_ball_ = true;
         lasers.reset();
 
-        switch (power_up.getType()) {
-            case PowerType::PLAYER:
-                stats.gainLife();
-                std::cout << "[GAME CONTROL] you pick extra life" << std::endl;
-                break;
-            case PowerType::CATCH_BALL:
-                ball_bounce_ = false;
-                std::cout << "[GAME CONTROL] you pick catch ball" << std::endl;
-                break;
-            case PowerType::INTERRUPTION:
-                power_interruption_ = true;
-                for (int i=1; i < DEFAULT_NUMER_OF_BALLS; i++){
-                    balls.createBall(ball.getPositions().x+i*2, ball.getPositions().y, ball.getDirection().x, ball.getDirection().y);
-                }
-                std::cout << "[GAME CONTROL] you pick interruption" << std::endl;
-                break;
-            case PowerType::LASER:
-                laser_on_ = true;
-                std::cout << "[GAME CONTROL] you pick laser" << std::endl;
-                break;
-            case PowerType::RACKET_GROW:
-                release_ball_ = true;
-                racket.setParameters(racket.getParameters().width + DEFAULT_RACKET_INCREASE * 3, racket.getParameters().height, racket.getParameters().speed);
-                std::cout << "[GAME CONTROL] you pick racket grow" << std::endl;
-                break;
-            case PowerType::SLOW_DOWN:
-                if (ball.getParameters().speed > 2) {
-                    ball.setBallSpeed(ball.getParameters().speed - 1);
-                    std::cout << "[GAME CONTROL] ball is now slowed down: " << ball.getParameters().speed << std::endl;
-                }
-                break;
-            default:
-                break;
+        switch (power_up.getType())
+        {
+        case PowerType::PLAYER:
+            stats.gainLife();
+            ball.reset(false); // need to reset ball speed, its stackable
+            std::cout << "[GAME CONTROL] you pick extra life" << std::endl;
+            break;
+        case PowerType::CATCH_BALL:
+            ball.reset(false);
+            ball_bounce_ = false;
+            std::cout << "[GAME CONTROL] you pick catch ball" << std::endl;
+            break;
+        case PowerType::INTERRUPTION:
+            ball.reset(false);
+            power_interruption_ = true;
+            for (int i = 1; i < DEFAULT_NUMER_OF_BALLS; i++)
+            {
+                balls.createBall(ball.getPositions().x + i * 2, ball.getPositions().y, ball.getDirection().x, ball.getDirection().y);
+            }
+            std::cout << "[GAME CONTROL] you pick interruption" << std::endl;
+            break;
+        case PowerType::LASER:
+            ball.reset(false);
+            laser_on_ = true;
+            std::cout << "[GAME CONTROL] you pick laser" << std::endl;
+            break;
+        case PowerType::RACKET_GROW:
+            ball.reset(false);
+            release_ball_ = true;
+            racket.setParameters(racket.getParameters().width + DEFAULT_RACKET_INCREASE * 3, racket.getParameters().height, racket.getParameters().speed);
+            std::cout << "[GAME CONTROL] you pick racket grow" << std::endl;
+            break;
+        case PowerType::SLOW_DOWN:
+            if (ball.getParameters().speed > 2)
+            {
+                ball.setBallSpeed(ball.getParameters().speed - 1);
+                std::cout << "[GAME CONTROL] ball is now slowed down: " << ball.getParameters().speed << std::endl;
+            }
+            break;
+        default:
+            break;
         }
         power_up.destroy();
     }
@@ -582,9 +643,12 @@ void GameControl::handlePowerUps(Brick &brick, Racket &racket, Ball &ball, GameS
 bool GameControl::hasWon(Board &board)
 {
     auto &bricks = board.getBricks();
-    for (const auto& row : bricks) {
-        for (const auto& brick : row) {
-            if (!brick.isDestroyed() && brick.getBrickType().color != BrickColor::GOLD) {
+    for (const auto &row : bricks)
+    {
+        for (const auto &brick : row)
+        {
+            if (!brick.isDestroyed() && brick.getBrickType().color != BrickColor::GOLD)
+            {
                 return false;
             }
         }
@@ -610,20 +674,26 @@ bool GameControl::isRunning() const
  * @param ball The specific ball that was lost.
  * @param lasers The collection of lasers.
  */
-void GameControl::handleBallLost(GameStats &stats, Racket &racket, Board &board, Balls& balls, Ball& ball, Lasers& lasers)
+void GameControl::handleBallLost(GameStats &stats, Racket &racket, Board &board, Balls &balls, Ball &ball, Lasers &lasers)
 {
-    if(balls.getBalls().size() > 1) {
+    if (balls.getBalls().size() > 1)
+    {
         balls.removeBall(ball);
-        if(balls.getBalls().size() == 1) {
+        if (balls.getBalls().size() == 1)
+        {
             std::cout << "[INTERRUPTION] Power OFF" << std::endl;
             power_interruption_ = false;
         }
-    } else if (stats.getBasicInfos().lives > 1) {
+    }
+    else if (stats.getBasicInfos().lives > 1)
+    {
         stats.loseLife();
         ball.setDirection(BALL_DEFAULT_DX, BALL_DEFAULT_DY);
         ball.setPosition(racket.getPositions().x + (racket.getParameters().width / 2));
         release_ball_ = false;
-    } else {
+    }
+    else
+    {
         std::cout << "[GAME CONTROL] GAME OVER" << std::endl;
         saveBestScore(stats, board);
         CURRENT_GAME_STATE = GameStates::END_GAME;
@@ -641,7 +711,7 @@ void GameControl::handleBallLost(GameStats &stats, Racket &racket, Board &board,
  * @param board The game board.
  * @param lasers The collection of lasers.
  */
-void GameControl::resetGame(GameStats &stats, Balls &balls, Racket &racket, Board &board, Lasers& lasers)
+void GameControl::resetGame(GameStats &stats, Balls &balls, Racket &racket, Board &board, Lasers &lasers)
 {
     stats.reset();
     racket.reset();

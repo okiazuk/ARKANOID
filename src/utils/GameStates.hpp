@@ -1,6 +1,7 @@
 #pragma once
 
-enum class GameStates {
+enum class GameStates
+{
 	WELCOME,
 	IN_GAME,
 	END_GAME,

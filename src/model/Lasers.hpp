@@ -2,32 +2,21 @@
 #include "Laser.hpp"
 #include <memory>
 
-
-
-
-
-
-
-
-class Lasers{
+class Lasers
+{
 
 public:
 	Lasers() = default;
 
-	void createLaser(float x1, float x2=0, float y1=0, float y2=0);
-	void removeLaser(const Laser& laser);
+	void createLaser(float x1, float x2 = 0, float y1 = 0, float y2 = 0);
+	void removeLaser(const Laser &laser);
 	void reset();
 	int getRemainingLaser();
 	void setRemainingLaser(int number);
-	std::vector<std::unique_ptr<Laser>>& getLasers();
-	const std::vector<std::unique_ptr<Laser>>& getLasers() const;
+	std::vector<std::unique_ptr<Laser>> &getLasers();
+	const std::vector<std::unique_ptr<Laser>> &getLasers() const;
 
 private:
-
 	std::vector<std::unique_ptr<Laser>> lasers_;
 	int laser_counter_ = DEFAULT_NUMBER_OF_LASER;
-
-
-
-
 };

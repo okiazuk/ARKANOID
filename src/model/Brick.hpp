@@ -16,7 +16,7 @@ enum class BrickColor
     YELLOW,          // 7 - 120pts
     SILVER,          // 8 - 200pts
     GOLD,            // 9
-    SILVER_MODIFIED,  // brick not used directly because it comes from 8
+    SILVER_MODIFIED, // brick not used directly because it comes from 8
     NONE             // x
 
 };
@@ -27,21 +27,18 @@ struct BrickType
     std::vector<int> rgb_values;
     int gained_points;
     int width = (BRICK_DEFAULT_WIDTH);
-    int height =(BRICK_DEFAULT_HEIGHT);
+    int height = (BRICK_DEFAULT_HEIGHT);
 };
-
-
 
 class Brick
 {
 public:
-    Brick(int color, PowerUps& power_up);
-    void hit(float brick_middle_x, float brick_middle_y, bool interruption=false);   // when a brick is hit by a ball
-    bool isDestroyed() const; 
+    Brick(int color, PowerUps &power_up);
+    void hit(float brick_middle_x, float brick_middle_y, bool interruption = false); // when a brick is hit by a ball
+    bool isDestroyed() const;
     const BrickType &getBrickType() const;
-    const PowerUps& getPowerUp() const;   //used in view
-    PowerUps& getPowerUp();               // in model
-    
+    const PowerUps &getPowerUp() const; // used in view
+    PowerUps &getPowerUp();             // in model
 
 private:
     const int getPointsFromColor(BrickColor &color) const;
@@ -49,5 +46,4 @@ private:
     bool destroyed_ = false;
     BrickType type_;
     PowerUps power_up_;
-
 };

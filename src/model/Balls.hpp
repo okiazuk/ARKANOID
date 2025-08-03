@@ -3,26 +3,19 @@
 #include <memory>
 #include <vector>
 
-
-
-
-class Balls {
+class Balls
+{
 
 public:
-
 	Balls() = default;
 
 	// overloading
-	std::vector<std::unique_ptr<Ball>>& getBalls(); //for model
-	const std::vector<std::unique_ptr<Ball>>& getBalls() const; //for view
-	void createBall(float x=0, float y=0, float dx=0, float dy=0);
-	void removeBall(const Ball& ball);
+	std::vector<std::unique_ptr<Ball>> &getBalls();							// for model
+	const std::vector<std::unique_ptr<Ball>> &getBalls() const; // for view
+	void createBall(float x = 0, float y = 0, float dx = 0, float dy = 0);
+	void removeBall(const Ball &ball);
 	void reset();
 
-private:		
-
+private:
 	std::vector<std::unique_ptr<Ball>> balls_;
-
-
-
 };

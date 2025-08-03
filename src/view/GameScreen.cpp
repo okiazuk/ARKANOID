@@ -6,7 +6,7 @@
  * model is using float and view is fine with it because allegro handles it
  */
 
-void GameScreen::draw(Board &board, Balls &balls, Racket &racket, GameStats &stats, Lasers& lasers)
+void GameScreen::draw(Board &board, Balls &balls, Racket &racket, GameStats &stats, Lasers &lasers)
 {
     switch (CURRENT_GAME_STATE)
     {
@@ -22,7 +22,7 @@ void GameScreen::draw(Board &board, Balls &balls, Racket &racket, GameStats &sta
     }
 }
 
-void GameScreen::drawInGame(const Board &board, const Balls &balls, const Racket &racket, const GameStats &stats, const Lasers& lasers)
+void GameScreen::drawInGame(const Board &board, const Balls &balls, const Racket &racket, const GameStats &stats, const Lasers &lasers)
 {
     al_clear_to_color(al_map_rgb(BLACKGROUND_VEC[0], BLACKGROUND_VEC[1], BLACKGROUND_VEC[2]));
 
@@ -68,7 +68,6 @@ void GameScreen::drawInGame(const Board &board, const Balls &balls, const Racket
                 // Draw the letter centered in the brick
                 al_draw_text(font_, al_map_rgb(BLACKGROUND_VEC[0], BLACKGROUND_VEC[1], BLACKGROUND_VEC[2]), center_x,
                              center_y - al_get_font_line_height(font_) / 2, ALLEGRO_ALIGN_CENTER, letter_str);
-
             }
             else
             {
@@ -94,8 +93,10 @@ void GameScreen::drawInGame(const Board &board, const Balls &balls, const Racket
         al_map_rgb(WHITE_VEC[0], WHITE_VEC[1], WHITE_VEC[2]));
 
     // Draw ball with proper rounding
-    for (auto& ball: balls.getBalls()) {
-        if(!ball->isLost()){
+    for (auto &ball : balls.getBalls())
+    {
+        if (!ball->isLost())
+        {
             const BallPositions &ball_pos = ball->getPositions();
             al_draw_filled_circle(
                 (ball_pos.x),
@@ -106,10 +107,11 @@ void GameScreen::drawInGame(const Board &board, const Balls &balls, const Racket
     }
 
     // Draw lasers
-    for (auto& laser : lasers.getLasers()) {
-        const auto& pos = laser->getPositions();
+    for (auto &laser : lasers.getLasers())
+    {
+        const auto &pos = laser->getPositions();
         al_draw_filled_rectangle(
-           (pos.x1),
+            (pos.x1),
             (pos.y1),
             (pos.x2),
             (pos.y2),
@@ -203,26 +205,23 @@ void GameScreen::drawWelcome()
     int base_width = al_get_text_width(font_, "WELCOME TO ARKANOID");
     int scaled_width = base_width * 3;
 
-            al_draw_text(font_, al_map_rgb(WHITE_VEC[0], WHITE_VEC[1], WHITE_VEC[2]),
-                     (SCREEN_WIDTH - scaled_width) / 6, (SCREEN_HEIGHT / 6), 0, "WELCOME TO ARKANOID");
+    al_draw_text(font_, al_map_rgb(WHITE_VEC[0], WHITE_VEC[1], WHITE_VEC[2]),
+                 (SCREEN_WIDTH - scaled_width) / 6, (SCREEN_HEIGHT / 6), 0, "WELCOME TO ARKANOID");
 
-        // Scale down a bit for other text
-        al_identity_transform(&scale_transform);
-        al_scale_transform(&scale_transform, 2.0, 2.0);
-        al_use_transform(&scale_transform);
+    // Scale down a bit for other text
+    al_identity_transform(&scale_transform);
+    al_scale_transform(&scale_transform, 2.0, 2.0);
+    al_use_transform(&scale_transform);
 
-        base_width = al_get_text_width(font_, "Press any key to start");
-        scaled_width = base_width * 2;
-        al_draw_text(font_, al_map_rgb(WHITE_VEC[0], WHITE_VEC[1], WHITE_VEC[2]),
-                     (SCREEN_WIDTH - scaled_width) / 4, (SCREEN_HEIGHT / 4) + UI_TEXT_INFO_HEIGHT * 2, 0, "Press any key to start");
-
+    base_width = al_get_text_width(font_, "Press any key to start");
+    scaled_width = base_width * 2;
+    al_draw_text(font_, al_map_rgb(WHITE_VEC[0], WHITE_VEC[1], WHITE_VEC[2]),
+                 (SCREEN_WIDTH - scaled_width) / 4, (SCREEN_HEIGHT / 4) + UI_TEXT_INFO_HEIGHT * 2, 0, "Press any key to start");
 
     // Restore original transform
     al_use_transform(&transform);
 
     al_flip_display();
-
-
 }
 
 void GameScreen::drawEndGame(const GameStats &stats)
@@ -286,8 +285,6 @@ void GameScreen::drawEndGame(const GameStats &stats)
     al_flip_display();
 }
 
-
-
 bool GameScreen::init()
 {
 
@@ -302,7 +299,6 @@ bool GameScreen::init()
         std::cout << "[GAMESCREEN] Error failed to install keyboard!" << std::endl;
         return false;
     }
-
 
     if (!al_install_mouse())
     {
