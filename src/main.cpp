@@ -5,6 +5,7 @@ Description: breakout like game in cpp using allegro GUI
 Controls: 
             - L to leave
             - R to reset best score
+            - K to switch keyboard/mouse racket control
             - 0-1-2-3.. to switch level
 
 Dev Notes:  I'm using references the most throughout the codebase which I find convenient for this project size, using pointers when needed

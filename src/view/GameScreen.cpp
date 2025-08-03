@@ -8,18 +8,17 @@
 
 void GameScreen::draw(Board &board, Balls &balls, Racket &racket, GameStats &stats, Lasers& lasers)
 {
-
-    if (CURRENT_GAME_STATE == GameStates::IN_GAME)
+    switch (CURRENT_GAME_STATE)
     {
+    case GameStates::IN_GAME:
         drawInGame(board, balls, racket, stats, lasers);
-    }
-    else if (CURRENT_GAME_STATE == GameStates::END_GAME)
-    {
+        break;
+    case GameStates::END_GAME:
         drawEndGame(stats);
-    }
-    else if (CURRENT_GAME_STATE == GameStates::WELCOME)
-    {
+        break;
+    case GameStates::WELCOME:
         drawWelcome();
+        break;
     }
 }
 

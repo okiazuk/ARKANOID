@@ -1,7 +1,6 @@
 #include "model/Brick.hpp"
 #include <iostream>
 
-// Initialize brick with default type and intact state
 Brick::Brick(int color, PowerUps& power_up) : power_up_(power_up)
 {
     type_.color = BrickColor(color);
