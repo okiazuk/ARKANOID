@@ -2,6 +2,13 @@
 Project: Arkanoid 
 Author: 566700
 Description: breakout like game in cpp using allegro GUI
+Controls: 
+            - L to leave
+            - R to reset best score
+            - 0-1-2-3.. to switch level
+
+Dev Notes:  I'm using references the most throughout the codebase which I find convenient for this project size, using pointers when needed
+            Decided to use most of the time "use" relationship between objects, not a lot of "has" relationships
 */
 
 #include <iostream>
@@ -19,7 +26,6 @@ Description: breakout like game in cpp using allegro GUI
 #include "model/Lasers.hpp"
 #include "view/GameScreen.hpp"
 #include "utils/LevelLoader.hpp"
-#include <map>
 
 
 
@@ -27,7 +33,7 @@ Description: breakout like game in cpp using allegro GUI
 int main(int argc, char* argv[]) {
 
 
-    std::cout << "[MAIN] GAME STARTING.." << std::endl; //logs in terminal
+    std::cout << "[MAIN] GAME STARTING.." << std::endl; //using kind of logs in terminal to get a better grasp on what is going on
 
     // Initialize game objects
 

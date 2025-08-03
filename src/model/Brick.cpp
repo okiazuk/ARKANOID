@@ -13,9 +13,8 @@ Brick::Brick(int color, PowerUps& power_up) : power_up_(power_up)
 }  
 
 
-Brick::~Brick() {std::cout << "[BRICK] a brick has been deleted" << std::endl; }
 
-void Brick::hit(float brick_middle_x, float brick_middle_y)
+void Brick::hit(float brick_middle_x, float brick_middle_y, bool interruption)
 
 
 {
@@ -25,7 +24,7 @@ void Brick::hit(float brick_middle_x, float brick_middle_y)
         type_.color = BrickColor::NONE;
         type_.gained_points = 0;
     
-        if (power_up_.getType() != PowerType::NONE){
+        if (power_up_.getType() != PowerType::NONE && !interruption){
             power_up_.setPositions(brick_middle_x, brick_middle_y);
         }
 

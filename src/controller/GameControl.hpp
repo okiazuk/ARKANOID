@@ -21,7 +21,6 @@ public:
 	void processInputs(Racket &racket, Balls &balls, Board &board, GameStats &stats, Lasers& lasers);
 	void update(Board &board, Racket &racket, GameStats &stats, Balls& balls, Lasers& lasers);
 	bool isRunning() const;
-	GameStates getGameState() const;
 
 private:
 	ALLEGRO_KEYBOARD_STATE ks_;
@@ -29,14 +28,13 @@ private:
 	bool running_flag_ = true; // overall game is running by default
 	bool game_has_started_ = false;
 	bool laser_on_ = false;
-	int laser_counter_ = DEFAULT_NUMBER_OF_LASER;
 	bool release_ball_ = false;
 	bool ball_bounce_ = true;
 	bool power_interruption_ = false;
 	void handleBallLost(GameStats &stats, Racket &racket, Board &board, Balls& balls, Ball& ball, Lasers& lasers);
 
 	void processGameInput(GameStats& stats, Racket &racket, Balls &balls, Lasers& lasers, Board& board);
-	void processMenuInput();
+	void processWelcomeInput();
 	void checkWallCollisions(Ball &ball);
 	void checkBrickCollisions(Balls &balls, Board &board, GameStats &stats, Racket &racket, Lasers& lasers);
 	void checkRacketCollisions(Ball &ball, Racket &racket);
@@ -45,7 +43,7 @@ private:
 	void resetGame(GameStats &stats, Balls &balls, Racket &racket, Board &board, Lasers& lasers);
 	void processEndGameInput();
 	void saveBestScore(GameStats &stats, Board &board);
-	void handlePowerUps(Brick &brick, Racket &racket, Ball &ball, GameStats &stats, Balls& balls);
+	void handlePowerUps(Brick &brick, Racket &racket, Ball &ball, GameStats &stats, Balls& balls, Lasers& lasers);
 };
 
 

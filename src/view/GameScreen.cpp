@@ -3,7 +3,7 @@
 
 /**
  * @brief everything should be const because we simply print from the model
- * model is using float and view is casting in int
+ * model is using float and view is fine with it because allegro handles it
  */
 
 void GameScreen::draw(Board &board, Balls &balls, Racket &racket, GameStats &stats, Lasers& lasers)
@@ -44,8 +44,6 @@ void GameScreen::drawInGame(const Board &board, const Balls &balls, const Racket
             const PowerUps &power_up = brick.getPowerUp();
             const PowerUpPositions power_up_pos = power_up.getPositions();
             const PowerType power_type = power_up.getType();
-            const int power_up_pos_x = power_up_pos.x;
-            const int power_up_pos_y = power_up_pos.y;
             const int power_up_speed = power_up.getParameters().speed;
             if (!brick.isDestroyed() && brick_color != BrickColor::NONE)
             {
@@ -78,8 +76,8 @@ void GameScreen::drawInGame(const Board &board, const Balls &balls, const Racket
                 if (power_type != PowerType::NONE)
                 {
                     al_draw_filled_circle(
-                        power_up_pos_x,
-                        power_up_pos_y,
+                        power_up_pos.x,
+                        power_up_pos.y,
                         power_up_speed,
                         al_map_rgb(PURPLE_UP_VEC[0], PURPLE_UP_VEC[1], PURPLE_UP_VEC[2]));
                 }
@@ -101,7 +99,7 @@ void GameScreen::drawInGame(const Board &board, const Balls &balls, const Racket
         if(!ball->isLost()){
             const BallPositions &ball_pos = ball->getPositions();
             al_draw_filled_circle(
-                (ball_pos.x), // explicit conversion with rounding
+                (ball_pos.x),
                 (ball_pos.y),
                 (ball->getParameters().radius),
                 al_map_rgb(WHITE_VEC[0], WHITE_VEC[1], WHITE_VEC[2]));
@@ -116,7 +114,7 @@ void GameScreen::drawInGame(const Board &board, const Balls &balls, const Racket
             (pos.y1),
             (pos.x2),
             (pos.y2),
-            al_map_rgb(RED_VEC[0], RED_VEC[1], RED_VEC[2]) // Red color for lasers
+            al_map_rgb(RED_VEC[0], RED_VEC[1], RED_VEC[2]) // red color for lasers
         );
     }
 
@@ -288,6 +286,8 @@ void GameScreen::drawEndGame(const GameStats &stats)
 
     al_flip_display();
 }
+
+
 
 bool GameScreen::init()
 {

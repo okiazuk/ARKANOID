@@ -10,7 +10,7 @@ void GameControl::processInputs(Racket &racket, Balls &balls, Board &board, Game
 
     if (CURRENT_GAME_STATE == GameStates::WELCOME)
     {
-        processMenuInput();
+        processWelcomeInput();
     }
     else if (CURRENT_GAME_STATE == GameStates::IN_GAME)
 
@@ -91,10 +91,9 @@ void GameControl::processGameInput(GameStats& stats, Racket &racket, Balls &ball
             if (laser_on_)
             {
                 lasers.createLaser(racket.getPositions().x + racket_width/2);
-                laser_counter_ -= 1;
-                if (laser_counter_ == 0)
-                {
-                    laser_counter_ = DEFAULT_NUMBER_OF_LASER;
+                lasers.setRemainingLaser(lasers.getRemainingLaser() - 1);
+                if (lasers.getRemainingLaser() == 0)
+                {   lasers.setRemainingLaser(DEFAULT_NUMBER_OF_LASER);
                     laser_on_ = false;
                 }
             }
@@ -128,7 +127,7 @@ void GameControl::processGameInput(GameStats& stats, Racket &racket, Balls &ball
 
 }
 
-void GameControl::processMenuInput()
+void GameControl::processWelcomeInput()
 {
 
     al_get_keyboard_state(&ks_);
@@ -218,7 +217,7 @@ void GameControl::checkWallCollisions(Ball &ball)
     const float ball_speed = ball.getParameters().speed;
 
     // HANDLING SCREEN COLLISIONS
-    if (ball_pos.x + ball_radius >= SCREEN_WIDTH || ball_pos.x - ball_radius <= 0)
+    if (ball_pos.x + ball_radius > SCREEN_WIDTH || ball_pos.x - ball_radius < 0)
     {
         ball.setDirection(-direction.x, direction.y);
     }
@@ -302,6 +301,11 @@ void GameControl::checkRacketCollisions(Ball &ball, Racket &racket)
 
         if (!ball_bounce_)
         {
+            if(ball_pos.x + ball_radius >= racket_pos.x + racket_param.width){ //correct the ball catch to avoid bad wall collision
+                ball.setPosition(racket_pos.x + racket_param.width - ball_radius);
+            } else if (ball_pos.x - ball_radius <= racket_pos.x){
+                ball.setPosition(racket_pos.x + ball_radius);
+            }
             ball.reset();
             release_ball_ = false;
             ball_bounce_ = true;
@@ -333,7 +337,7 @@ bool GameControl::powerUpHitRacket(PowerUps &power_up, Racket &racket)
     return false;
 }
 
-void GameControl::handlePowerUps(Brick &brick, Racket &racket, Ball &ball, GameStats &stats, Balls& balls)
+void GameControl::handlePowerUps(Brick &brick, Racket &racket, Ball &ball, GameStats &stats, Balls& balls, Lasers& lasers)
 {
 
     PowerUps &power_up = brick.getPowerUp();
@@ -344,10 +348,9 @@ void GameControl::handlePowerUps(Brick &brick, Racket &racket, Ball &ball, GameS
 
     if (power_interruption_)
     {
-        power_up.setPositions(-1, -1); // powers aren't usable when interruption
-    }
-
-    if (power_up.getType() != PowerType::NONE)
+        return; // when interruption, no power ups
+        
+    } else if (power_up.getType() != PowerType::NONE)
     {
 
         power_up.update();
@@ -401,7 +404,7 @@ void GameControl::handlePowerUps(Brick &brick, Racket &racket, Ball &ball, GameS
                 ball.reset(false);
                 ball_bounce_ = true;
                 release_ball_ = true;
-                laser_counter_ = DEFAULT_NUMBER_OF_LASER;
+                lasers.reset();
                 laser_on_ = true;
 
                 std::cout << "[GAME CONTROL] you pick laser" << std::endl;
@@ -431,7 +434,7 @@ void GameControl::handlePowerUps(Brick &brick, Racket &racket, Ball &ball, GameS
                     std::cout << "[GAME CONTROL] ball is now slowed down: " << ball_speed - 1 << std::endl;
                 }
             }
-            power_up.disappear();
+            power_up.destroy();
         }
     }
 }
@@ -479,7 +482,7 @@ void GameControl::checkBrickCollisions(Balls &balls, Board &board, GameStats &st
                     const int brick_points = brick.getBrickType().gained_points;
                     const float brick_middle_x = brick_left + ((brick_right - brick_left) / 2);
                     const float brick_middle_y = brick_top + ((brick_bottom - brick_top) / 2);
-                    brick.hit(brick_middle_x, brick_middle_y);
+                    brick.hit(brick_middle_x, brick_middle_y, power_interruption_);
                     stats.addScore(brick_points);
                     break; // when one laser hits a brick, don't need to check if other lasers hit the same brick
                 }
@@ -498,7 +501,7 @@ void GameControl::checkBrickCollisions(Balls &balls, Board &board, GameStats &st
 
                 if (brick.isDestroyed() || collision_happened)
                     {
-                        handlePowerUps(brick, racket, *ball, stats, balls);
+                        handlePowerUps(brick, racket, *ball, stats, balls, lasers);
                         continue; // we don't want collision with destroyed bricks
                     }
 
@@ -551,7 +554,7 @@ void GameControl::checkBrickCollisions(Balls &balls, Board &board, GameStats &st
                         const int brick_points = brick.getBrickType().gained_points;
                         const float brick_middle_x = brick_left + ((brick_right - brick_left) / 2);
                         const float brick_middle_y = brick_top + ((brick_bottom - brick_top) / 2);
-                        brick.hit(brick_middle_x, brick_middle_y);
+                        brick.hit(brick_middle_x, brick_middle_y, power_interruption_);
                         stats.addScore(brick_points);
 
                         // Update ball direction
@@ -628,6 +631,7 @@ void GameControl::resetGame(GameStats &stats, Balls &balls, Racket &racket, Boar
     lasers.reset();
     game_has_started_ = false;
     release_ball_ = false;
+    ball_bounce_ = true;
     power_interruption_ = false;
     laser_on_ = false;
 }
@@ -638,7 +642,6 @@ void GameControl::saveBestScore(GameStats &stats, Board &board)
     const int best_score = loadScore(BEST_SCORE_PATH_MAP.at(level_number));
     const int current_score = stats.getBasicInfos().score;
 
-    std::cout << current_score << best_score << std::endl;
     if (best_score < current_score)
     {
         saveScore(current_score, BEST_SCORE_PATH_MAP.at(level_number));

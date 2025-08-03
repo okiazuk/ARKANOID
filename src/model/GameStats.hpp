@@ -23,6 +23,4 @@ public:
 
 private:
     BasicInfo basic_infos_;
-    std::string best_score_path_;
-    std::string level_path;
 };

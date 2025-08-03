@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <map>
+#include <vector>
 /**
  * @brief using constexpr for better performance, more or less every global parameters to configure the game and its components
  */
@@ -114,3 +115,20 @@ inline std::map<int, char> POWER_UP_TO_LETTER_MAP = {
 	{6, 'P'} //PLAYER
 
 };
+
+
+//----COLOR VECTORS----
+
+inline const std::vector<int> WHITE_VEC = {255, 255, 255};
+inline const std::vector<int> ORANGE_VEC = {255, 165, 0};
+inline const std::vector<int> CYAN_VEC = {0, 255, 255};
+inline const std::vector<int> GREEN_VEC = {0, 255, 0};
+inline const std::vector<int> RED_VEC = {255, 0, 0};
+inline const std::vector<int> BLUE_VEC = {0, 0, 255};
+inline const std::vector<int> MAGENTA_VEC = {255, 0, 255};
+inline const std::vector<int> YELLOW_VEC = {255, 255, 0};
+inline const std::vector<int> SILVER_VEC = {192, 192, 192};
+inline const std::vector<int> SILVER_MODIFIED_VEC = {140, 140, 150};
+inline const std::vector<int> GOLD_VEC = {255, 215, 0};
+inline const std::vector<int> BLACKGROUND_VEC = {0, 0, 0};
+inline const std::vector<int> PURPLE_UP_VEC = {147, 112, 219}; 

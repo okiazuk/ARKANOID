@@ -6,4 +6,6 @@ enum class GameStates {
 	END_GAME,
 };
 
-extern GameStates CURRENT_GAME_STATE;
+// These states correspond to the screen currently displayed
+
+extern GameStates CURRENT_GAME_STATE; // used in controller and view, I found it useful making this global because game state should be accessed everywhere

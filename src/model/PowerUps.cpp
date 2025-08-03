@@ -46,10 +46,6 @@ const PowerUpParamaters& PowerUps::getParameters() const{
 }
 
 
-void PowerUps::disappear() {
-
+void PowerUps::destroy() {
 power_type_ = PowerType::NONE;
-
 }
-
-

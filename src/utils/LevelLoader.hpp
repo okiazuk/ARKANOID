@@ -32,8 +32,6 @@ inline std::vector<std::vector<Brick>> loadLevel(const std::string& filename) {
                 // CHECK FIRST CHARACTER
                 if (c == 'x'){
                     brick_color = 11;
-                }else if (c == 'g'){
-                    brick_color = 10;
                 } else{
                     brick_color = c - '0';  // '1' becomes 1, '2' becomes 2, etc.
                 }

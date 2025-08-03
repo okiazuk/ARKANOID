@@ -1,0 +1,11 @@
+\contentsline {section}{\numberline {1}Tâches réalisées}{2}{section.1}%
+\contentsline {section}{\numberline {2}Relations classes}{2}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Modèle}{2}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Vue}{3}{subsection.2.2}%
+\contentsline {subsection}{\numberline {2.3}Controller}{4}{subsection.2.3}%
+\contentsline {section}{\numberline {3}Logique de jeu}{4}{section.3}%
+\contentsline {section}{\numberline {4}MVC}{4}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Modèle}{4}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Vue}{4}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.3}Controller}{5}{subsection.4.3}%
+\contentsline {section}{\numberline {5}Copilot}{5}{section.5}%

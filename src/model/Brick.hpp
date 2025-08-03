@@ -15,8 +15,8 @@ enum class BrickColor
     MAGENTA,         // 6 - 110pts
     YELLOW,          // 7 - 120pts
     SILVER,          // 8 - 200pts
+    GOLD,            // 9
     SILVER_MODIFIED,  // brick not used directly because it comes from 8
-    GOLD,            // g
     NONE             // x
 
 };
@@ -32,30 +32,15 @@ struct BrickType
 
 
 
-inline const std::vector<int> WHITE_VEC = {255, 255, 255};
-inline const std::vector<int> ORANGE_VEC = {255, 165, 0};
-inline const std::vector<int> CYAN_VEC = {0, 255, 255};
-inline const std::vector<int> GREEN_VEC = {0, 255, 0};
-inline const std::vector<int> RED_VEC = {255, 0, 0};
-inline const std::vector<int> BLUE_VEC = {0, 0, 255};
-inline const std::vector<int> MAGENTA_VEC = {255, 0, 255};
-inline const std::vector<int> YELLOW_VEC = {255, 255, 0};
-inline const std::vector<int> SILVER_VEC = {192, 192, 192};
-inline const std::vector<int> SILVER_MODIFIED_VEC = {140, 140, 150};
-inline const std::vector<int> GOLD_VEC = {255, 215, 0};
-inline const std::vector<int> BLACKGROUND_VEC = {0, 0, 0};
-inline const std::vector<int> PURPLE_UP_VEC = {147, 112, 219}; // Bright purple for power-ups
-
 class Brick
 {
 public:
-    Brick(int color, PowerUps& power_up);      // constructor
-    ~Brick();                 // destructor
-    void hit(float brick_middle_x, float brick_middle_y);   // when a brick is hit by a ball
-    bool isDestroyed() const; // check if destroyed
+    Brick(int color, PowerUps& power_up);
+    void hit(float brick_middle_x, float brick_middle_y, bool interruption=false);   // when a brick is hit by a ball
+    bool isDestroyed() const; 
     const BrickType &getBrickType() const;
-    const PowerUps& getPowerUp() const;  
-    PowerUps& getPowerUp();              
+    const PowerUps& getPowerUp() const;   //used in view
+    PowerUps& getPowerUp();               // in model
     
 
 private:

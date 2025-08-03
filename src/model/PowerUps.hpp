@@ -7,12 +7,12 @@
 enum class PowerType {
 
 	NONE,					// 0
-	LASER,				// 1 - L
-	RACKET_GROW,	// 2 - R
-	CATCH_BALL,		// 3 - C
-	SLOW_DOWN,		// 4 - S
-	INTERRUPTION,	// 5 - I
-	PLAYER				// 6 - P
+	LASER,				// 1 - L - shoot lasers which destroy an entire column of bricks, best power up of them (SPACE BAR)
+	RACKET_GROW,	// 2 - R - racket grow, stackable
+	CATCH_BALL,		// 3 - C - catch the ball when it hits racket
+	SLOW_DOWN,		// 4 - S - slow down the ball, stackable
+	INTERRUPTION,	// 5 - I - balls splits in 3, no more power ups received
+	PLAYER				// 6 - P - player receives extra life, stackable
 
 };
 
@@ -49,7 +49,7 @@ public:
 	void setPositions(float x, float y);
 	const PowerUpPositions& getPositions() const;
 	const PowerUpParamaters& getParameters() const;
-	void disappear();
+	void destroy();
 	void update();
 
 

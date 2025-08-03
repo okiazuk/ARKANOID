@@ -32,5 +32,18 @@ std::vector<std::unique_ptr<Laser>>& Lasers::getLasers() {
 void Lasers::reset(){
 
 	lasers_.clear();
+	laser_counter_ = DEFAULT_NUMBER_OF_LASER;
+
+}
+
+
+int Lasers::getRemainingLaser(){
+
+	return laser_counter_;
+}
+
+void Lasers::setRemainingLaser(int number){
+
+	laser_counter_ = number;
 
 }

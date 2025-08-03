@@ -52,7 +52,7 @@ bool Ball::isLost()
 void Ball::reset(bool direction)
 {
 
-  if (direction){
+  if (direction){ //choose if we reset direction too
     direction_ = BallDirection{};
   }
   parameters_ = BallParamaters{};
