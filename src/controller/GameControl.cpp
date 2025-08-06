@@ -290,7 +290,7 @@ void GameControl::checkWallCollisions(Ball &ball)
     const BallPositions &ball_pos = ball.getPositions();
     const float ball_radius = ball.getParameters().radius;
 
-    if (ball_pos.x + ball_radius > SCREEN_WIDTH || ball_pos.x - ball_radius < 0)
+    if (ball_pos.x + ball_radius >= SCREEN_WIDTH || ball_pos.x - ball_radius <= 0)
     {
         ball.setDirection(-direction.x, direction.y);
     }
@@ -613,7 +613,6 @@ void GameControl::handlePowerUps(Brick &brick, Racket &racket, Ball &ball, GameS
             break;
         case PowerType::RACKET_GROW:
             ball.reset(false);
-            release_ball_ = true;
             racket.setParameters(racket.getParameters().width + DEFAULT_RACKET_INCREASE * 3, racket.getParameters().height, racket.getParameters().speed);
             std::cout << "[GAME CONTROL] you pick racket grow" << std::endl;
             break;
