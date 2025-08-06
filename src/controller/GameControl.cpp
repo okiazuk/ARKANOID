@@ -431,6 +431,11 @@ void GameControl::checkLaserCollisions(Brick &brick, Lasers &lasers, GameStats &
             laser_y >= brick_top && laser_y <= brick_bottom)
         {
 
+            if (brick.getBrickType().color == BrickColor::GOLD)
+            {
+                lasers.removeLaser(*laser);
+            }
+
             const int brick_points = brick.getBrickType().gained_points;
             const float brick_middle_x = brick_left + (brick_width / 2.0f);
             const float brick_middle_y = brick_top + (brick_height / 2.0f);
